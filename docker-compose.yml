@@ -1,0 +1,98 @@
+version: "3.9"
+
+networks:
+  dns_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+services:
+
+  # ─── Pi-hole ───────────────────────────────────────────────────────────────
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "80:80/tcp"
+    environment:
+      TZ: "Europe/Rome"
+      WEBPASSWORD: "${PIHOLE_PASSWORD}"
+      PIHOLE_DNS_: "172.20.0.3#5335"   # punta a Unbound
+      DNSSEC: "true"
+      DNSMASQ_LISTENING: "all"
+    volumes:
+      - ./pihole/etc-pihole:/etc/pihole
+      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.2
+    depends_on:
+      - unbound
+    cap_add:
+      - NET_ADMIN
+
+  # ─── Unbound ───────────────────────────────────────────────────────────────
+  unbound:
+    image: mvance/unbound-rpi:latest
+    container_name: unbound
+    restart: unless-stopped
+    volumes:
+      - ./unbound/unbound.conf:/opt/unbound/etc/unbound/unbound.conf:ro
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.3
+
+  # ─── WireGuard ─────────────────────────────────────────────────────────────
+  wireguard:
+    image: linuxserver/wireguard:latest
+    container_name: wireguard
+    restart: unless-stopped
+    ports:
+      - "51820:51820/udp"
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Rome"
+      SERVERURL: "${WG_SERVER_URL}"      # IP pubblico o dominio
+      SERVERPORT: "51820"
+      PEERS: "${WG_PEERS}"              # numero client (es. 3)
+      PEERDNS: "172.20.0.2"            # usa Pi-hole
+      INTERNAL_SUBNET: "10.13.13.0"
+      ALLOWEDIPS: "0.0.0.0/0"
+    volumes:
+      - ./wireguard/config:/config
+      - /lib/modules:/lib/modules:ro
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.4
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+
+  # ─── Netdata (opzionale) ───────────────────────────────────────────────────
+  netdata:
+    image: netdata/netdata:latest
+    container_name: netdata
+    restart: unless-stopped
+    ports:
+      - "19999:19999"
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.5
+    profiles:
+      - monitoring    # avvia solo con: docker compose --profile monitoring up
