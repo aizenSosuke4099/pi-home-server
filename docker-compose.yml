@@ -56,13 +56,13 @@ services:
     container_name: wireguard
     restart: unless-stopped
     ports:
-      - "51820:51820/udp"
+      - "40959:40959/udp"
     environment:
       PUID: "1000"
       PGID: "1000"
       TZ: "Europe/Rome"
       SERVERURL: "${WG_SERVER_URL}"      # IP pubblico o dominio
-      SERVERPORT: "51820"
+      SERVERPORT: "40959"
       PEERS: "${WG_PEERS}"              # numero client (es. 3)
       PEERDNS: "172.20.0.2"            # usa Pi-hole
       INTERNAL_SUBNET: "10.13.13.0"
