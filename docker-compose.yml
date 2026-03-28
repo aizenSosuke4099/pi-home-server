@@ -1,5 +1,3 @@
-version: "3.9"
-
 networks:
   dns_net:
     driver: bridge
@@ -20,13 +18,12 @@ services:
       - "80:80/tcp"
     environment:
       TZ: "Europe/Rome"
-      WEBPASSWORD: "${PIHOLE_PASSWORD}"
-      PIHOLE_DNS_: "172.20.0.3#5335"   # punta a Unbound
-      DNSSEC: "true"
-      DNSMASQ_LISTENING: "all"
+      FTLCONF_webserver_api_password: "${PIHOLE_PASSWORD}"
+      FTLCONF_dns_upstreams: "172.20.0.3#5335"          # punta a Unbound
+      FTLCONF_dns_dnssec: "true"
+      FTLCONF_dns_listeningMode: "all"
     volumes:
       - ./pihole/etc-pihole:/etc/pihole
-      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     networks:
       dns_net:
         ipv4_address: 172.20.0.2

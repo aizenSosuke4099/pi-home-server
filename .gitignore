@@ -3,7 +3,6 @@
 
 # Dati runtime Pi-hole
 pihole/etc-pihole/
-pihole/etc-dnsmasq.d/
 
 # Config WireGuard generata (contiene chiavi private!)
 wireguard/config/
