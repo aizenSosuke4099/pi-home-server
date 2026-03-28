@@ -80,6 +80,23 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
 
+  # ─── DuckDNS (aggiornamento IP pubblico) ───────────────────────────────────
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    restart: unless-stopped
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Rome"
+      SUBDOMAINS: "${DUCKDNS_SUBDOMAIN}"
+      TOKEN: "${DUCKDNS_TOKEN}"
+      UPDATE_IP: "ipv4"
+      LOG_FILE: "true"
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.6
+
   # ─── Netdata (opzionale) ───────────────────────────────────────────────────
   netdata:
     image: netdata/netdata:latest
