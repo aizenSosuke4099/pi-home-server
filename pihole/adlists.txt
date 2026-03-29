@@ -26,11 +26,29 @@ https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.amazon.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.apple.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.samsung.txt
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.huawei.txt
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.xiaomi.txt
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.lgwebos.txt
 https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
 
-# ── Extra ───────────────────────────────────────────────────
-https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt
-https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.winoffice.txt
+# ── Social tracking (tracker, non i siti) ──────────────────
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.meta.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.tiktok.extended.txt
+
+# ── Crypto mining e fraud ──────────────────────────────────
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/anti.piracy.txt
+https://zerodot1.gitlab.io/CoinBlockerLists/hosts_browser
+
+# ── Gambling e fake news ───────────────────────────────────
+https://blocklistproject.github.io/Lists/fraud.txt
+https://blocklistproject.github.io/Lists/scam.txt
+
+# ── Microsoft/Office telemetria ────────────────────────────
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.winoffice.txt
+
+# ── Italiane ───────────────────────────────────────────────
 https://raw.githubusercontent.com/nicotsx/italian-pihole-lists/main/hosts.txt
+
+# ── Catch-all aggressiva (Hagezi Ultimate) ─────────────────
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/ultimate.txt
