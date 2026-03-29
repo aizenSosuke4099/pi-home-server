@@ -1,6 +1,6 @@
 - Rete:
     - Pi-hole:
-        href: http://192.168.1.40/admin
+        href: http://PI_IP_ADDRESS/admin
         description: Blocco ads e DNS
         icon: pi-hole
         widget:
@@ -16,7 +16,7 @@
 
 - Monitoraggio:
     - Uptime Kuma:
-        href: http://192.168.1.40:3001
+        href: http://PI_IP_ADDRESS:3001
         description: Stato dei servizi
         icon: uptime-kuma
         widget:
@@ -25,7 +25,7 @@
           slug: default
 
     - Netdata:
-        href: http://192.168.1.40:19999
+        href: http://PI_IP_ADDRESS:19999
         description: CPU, RAM, temperatura
         icon: netdata
         widget:

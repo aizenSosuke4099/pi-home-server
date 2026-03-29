@@ -71,7 +71,12 @@ nano .env
 
 | Variabile | Esempio | Descrizione |
 |---|---|---|
+| `PI_IP` | `192.168.1.40` | IP locale fisso del Raspberry Pi |
 | `PIHOLE_PASSWORD` | `miapassword` | Password per Pi-hole (usata anche da Homepage per i widget) |
+| `WG_SERVER_URL` | `nome.duckdns.org` | IP pubblico o dominio DuckDNS. `auto` lo rileva da solo |
+| `WG_PEERS` | `3` | Numero di client VPN (uno per dispositivo) |
+| `DUCKDNS_SUBDOMAIN` | `nome` | Solo il nome, senza `.duckdns.org` |
+| `DUCKDNS_TOKEN` | `a7c4d0ad-...` | Token dalla pagina [duckdns.org](https://www.duckdns.org) |
 
 ---
 
@@ -134,7 +139,14 @@ In questo modo **tutti i dispositivi della rete** (TV, telefoni, PC) useranno au
 
 ### 2. Configura Homepage
 
-Homepage si apre su `http://<IP-del-pi>:3000` ed e' gia' configurata con i widget di Pi-hole, Uptime Kuma e Netdata. La password di Pi-hole viene letta automaticamente dal `.env`.
+Homepage si apre su `http://<IP-del-pi>:3000`. Dopo il primo avvio, sostituisci l'IP placeholder nei link:
+
+```bash
+cd ~/pi-home-server
+sed -i "s/PI_IP_ADDRESS/$(hostname -I | awk '{print $1}')/g" homepage/config/services.yaml
+```
+
+I widget di Pi-hole e Netdata funzionano automaticamente. La password di Pi-hole viene letta dal `.env`.
 
 ### 3. Configura Uptime Kuma
 
@@ -145,6 +157,33 @@ Vai su `http://<IP-del-pi>:3001`, crea un account al primo accesso, poi aggiungi
 | Pi-hole | HTTP(s) | URL: `http://<IP-del-pi>/admin` |
 | Unbound | DNS | Hostname: `google.com`, Server: `172.20.0.3`, Porta: `5335` |
 | Homepage | HTTP(s) | URL: `http://<IP-del-pi>:3000` |
+
+### 4. Configura WireGuard
+
+Dopo l'avvio, mostra il QR code per connettere i dispositivi:
+
+```bash
+# QR code per il primo dispositivo
+sudo docker exec wireguard /app/show-peer peer1
+
+# Per il secondo
+sudo docker exec wireguard /app/show-peer peer2
+```
+
+Scansiona il QR con l'app **WireGuard** (iOS / Android). Per usare WireGuard da fuori casa, apri la porta nel router:
+
+| Campo | Valore |
+|---|---|
+| Porta | `40959` |
+| Protocollo | **UDP** |
+| IP destinazione | IP del Pi |
+
+### 5. Port forwarding sul router
+
+Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
+- Porta esterna/interna: `40959`
+- Protocollo: `UDP`
+- Destinazione: IP del Pi
 
 ---
 
@@ -221,7 +260,7 @@ Chrome forza HTTPS sugli IP locali. Usa Safari/Firefox oppure disabilita "HTTPS 
 
 ### Homepage mostra "Host validation failed"
 
-Verifica che `HOMEPAGE_ALLOWED_HOSTS` nel docker-compose includa il tuo IP. Se hai un IP diverso da `192.168.1.40`, modificalo nel docker-compose e nel file `homepage/config/services.yaml`.
+Verifica che `PI_IP` nel `.env` corrisponda all'IP del tuo Pi. Dopo aver corretto, riavvia con `sudo docker compose up -d`.
 
 ### Permessi negati su git pull
 
