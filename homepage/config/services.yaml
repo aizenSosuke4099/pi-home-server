@@ -28,3 +28,6 @@
         href: http://192.168.1.40:19999
         description: CPU, RAM, temperatura
         icon: netdata
+        widget:
+          type: netdata
+          url: http://netdata:19999
