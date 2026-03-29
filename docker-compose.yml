@@ -56,7 +56,7 @@ services:
     container_name: wireguard
     restart: unless-stopped
     ports:
-      - "40959:40959/udp"
+      - "40959:51820/udp"
     environment:
       PUID: "1000"
       PGID: "1000"
