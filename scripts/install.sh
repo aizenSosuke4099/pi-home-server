@@ -39,13 +39,7 @@ else
     info "Docker Compose già disponibile — skip."
 fi
 
-# ── 5. Abilita IP forwarding (necessario per WireGuard) ──────
-info "Abilitazione IP forwarding..."
-grep -qxF 'net.ipv4.ip_forward=1' /etc/sysctl.conf \
-    || echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
-sysctl -p -q
-
-# ── 6. File .env ─────────────────────────────────────────────
+# ── 5. File .env ────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
@@ -58,10 +52,14 @@ if [[ ! -f .env ]]; then
     read -rp "Premi INVIO quando hai modificato .env..." _
 fi
 
-# ── 7. Avvio stack ───────────────────────────────────────────
+# ── 6. Avvio stack ───────────────────────────────────────────
 info "Avvio dei container..."
 docker compose pull -q
 docker compose up -d
+
+# ── 7. Importazione liste di blocco ─────────────────────────
+info "Configurazione liste di blocco Pi-hole..."
+bash "$SCRIPT_DIR/scripts/setup-adlists.sh"
 
 # ── 8. Riepilogo ─────────────────────────────────────────────
 echo ""
@@ -71,6 +69,5 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 echo "  Pi-hole admin:  http://$(hostname -I | awk '{print $1}')/admin"
 echo "  Netdata:        http://$(hostname -I | awk '{print $1}'):19999  (se attivo)"
-echo "  WireGuard QR:   docker exec wireguard /app/show-peer <nome>"
 echo ""
 info "Imposta il DNS del router su: $(hostname -I | awk '{print $1}')"
