@@ -32,13 +32,11 @@ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.lgwebo
 https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
 
 # ── Social tracking (tracker, non i siti) ──────────────────
-https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.meta.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.tiktok.extended.txt
 
 # ── Crypto mining e fraud ──────────────────────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt
-https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/anti.piracy.txt
-https://zerodot1.gitlab.io/CoinBlockerLists/hosts_browser
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh-vpn-proxy-bypass.txt
 
 # ── Gambling e fake news ───────────────────────────────────
 https://blocklistproject.github.io/Lists/fraud.txt
@@ -48,7 +46,6 @@ https://blocklistproject.github.io/Lists/scam.txt
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.winoffice.txt
 
 # ── Italiane ───────────────────────────────────────────────
-https://raw.githubusercontent.com/nicotsx/italian-pihole-lists/main/hosts.txt
 
 # ── Catch-all aggressiva (Hagezi Ultimate) ─────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/ultimate.txt
