@@ -66,12 +66,6 @@ https://v.firebog.net/hosts/neohostsbasic.txt
 
 # ── DNS bypass e crypto mining ─────────────────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt
-https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh-vpn-proxy-bypass.txt
-
-# ── Mega-liste consolidate ────────────────────────────────
-https://big.oisd.nl/hosts
-https://raw.githubusercontent.com/badmojr/1Hosts/master/Pro/hosts.txt
-https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt
 
 # ── Catch-all aggressiva (Hagezi Ultimate) ─────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/ultimate.txt
