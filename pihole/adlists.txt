@@ -67,5 +67,10 @@ https://v.firebog.net/hosts/neohostsbasic.txt
 # ── DNS bypass e crypto mining ─────────────────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt
 
+# ── Popup, fake e ransomware ──────────────────────────────
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/popupads.txt
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/fake.txt
+https://raw.githubusercontent.com/blocklistproject/Lists/master/ransomware.txt
+
 # ── Catch-all aggressiva (Hagezi Ultimate) ─────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/ultimate.txt

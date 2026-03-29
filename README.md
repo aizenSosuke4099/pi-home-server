@@ -56,7 +56,7 @@ Lo script fa tutto in automatico:
 2. Installa Docker e Docker Compose
 3. Chiede di compilare il file `.env` con le tue impostazioni
 4. Scarica le immagini Docker e avvia i container
-5. Importa 49 liste di blocco in Pi-hole
+5. Importa 52 liste di blocco in Pi-hole
 
 ---
 
@@ -189,7 +189,7 @@ Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
 
 ## Liste di blocco
 
-Lo script `install.sh` importa automaticamente **49 liste** da `pihole/adlists.txt`, coprendo:
+Lo script `install.sh` importa automaticamente **52 liste** da `pihole/adlists.txt`, coprendo:
 
 | Categoria | Fonti |
 |---|---|
@@ -200,6 +200,7 @@ Lo script `install.sh` importa automaticamente **49 liste** da `pihole/adlists.t
 | Malware / phishing | Hagezi TIF, DandelionSprout, phishing.army, Firebog RPiList, abuse.ch, stalkerware |
 | Spam / scam / fraud | Spam404, durablenapkin, jarelllama, BlocklistProject fraud/scam |
 | DNS bypass / crypto | Hagezi DoH, DoH-VPN-proxy-bypass |
+| Popup / fake / ransomware | Hagezi PopupAds, Hagezi Fake, BlocklistProject Ransomware |
 | Catch-all | Hagezi Ultimate |
 
 Con tutte le liste attive si superano i **3M+ domini bloccati**. Le liste si aggiornano automaticamente una volta alla settimana.
