@@ -121,39 +121,26 @@ In questo modo **tutti i dispositivi della rete** (TV, telefoni, PC) useranno au
 
 ## Liste di blocco
 
-Pi-hole include una lista base da ~87k domini. Per una protezione completa, aggiungi queste liste in **Adlists → Add blocklist**:
+Lo script `install.sh` importa automaticamente **52 liste** da `pihole/adlists.txt`, coprendo:
 
-### Ads e tracking
-
-| Lista | Descrizione |
+| Categoria | Fonti |
 |---|---|
-| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt` | Hagezi Pro — ads + tracking aggressivo |
-| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/multi.txt` | Hagezi Multi — ads, tracking, malware, phishing |
-| `https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt` | Ad server noti |
-| `https://blocklistproject.github.io/Lists/tracking.txt` | Tracker comportamentali |
-| `https://blocklistproject.github.io/Lists/ads.txt` | Reti pubblicitarie |
+| Ads | Hagezi Pro/Multi, AdGuard, Easylist, AdAway, Admiral, anudeepND, yoyo |
+| Tracking | Easyprivacy, Firebog Prigent, frogeye first/multiparty, BlocklistProject |
+| Smart TV / Android | Perflyst SmartTV, Android tracking, Amazon Fire TV |
+| Telemetria per brand | Samsung, Apple, Amazon, Huawei, Xiaomi, LG webOS, Windows/Office, TikTok |
+| Malware / phishing | Hagezi TIF, DandelionSprout, phishing.army, Firebog RPiList, abuse.ch, stalkerware |
+| Spam / scam / fraud | Spam404, durablenapkin, jarelllama, BlocklistProject fraud/scam |
+| DNS bypass / crypto | Hagezi DoH, DoH-VPN-proxy-bypass |
+| Catch-all | Hagezi Ultimate |
 
-### Sicurezza
+Con tutte le liste attive si superano i **2.5M+ domini bloccati**. Le liste si aggiornano automaticamente una volta alla settimana.
 
-| Lista | Descrizione |
-|---|---|
-| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/tif.txt` | Threat Intelligence Feeds — malware e phishing |
-| `https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt` | Anti-malware |
-| `https://malware-filter.gitlab.io/malware-filter/phishing-filter-hosts.txt` | Filtro phishing |
-| `https://urlhaus.abuse.ch/downloads/hostfile/` | URL malevoli (abuse.ch) |
+Per aggiungere o rimuovere liste, modifica `pihole/adlists.txt` e riesegui:
 
-### Extra
-
-| Lista | Descrizione |
-|---|---|
-| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt` | Blocca DNS-over-HTTPS di terze parti (forza uso di Unbound) |
-| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.tiktok.extended.txt` | Tracker TikTok |
-| `https://raw.githubusercontent.com/nicotsx/italian-pihole-lists/main/hosts.txt` | Ads e tracking su siti italiani |
-| `https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts` | Lista globale extra |
-
-Dopo aver aggiunto le liste → **Tools → Update Gravity**.
-
-Le liste si aggiornano automaticamente una volta alla settimana. Con tutte le liste attive si arriva a **1.5M+ domini bloccati**.
+```bash
+sudo bash scripts/setup-adlists.sh
+```
 
 > Se un sito non funziona, vai su **Query Log** → trova la richiesta bloccata → clicca per aggiungerla alla allowlist.
 
@@ -215,10 +202,13 @@ pi-home-server/
 ├── unbound/
 │   └── unbound.conf         <- configurazione DNS resolver locale
 │
-├── pihole/                  <- dati Pi-hole (generati al primo avvio, gitignored)
+├── pihole/
+│   ├── adlists.txt          <- 52 liste di blocco pre-configurate
+│   └── etc-pihole/          <- dati Pi-hole (generati al primo avvio, gitignored)
 │
 └── scripts/
     ├── install.sh           <- installazione completa (Docker + avvio stack)
+    ├── setup-adlists.sh     <- importa le liste di blocco in Pi-hole
     └── update.sh            <- aggiornamento container
 ```
 
