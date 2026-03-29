@@ -4,9 +4,6 @@
 # Dati runtime Pi-hole
 pihole/etc-pihole/
 
-# Config WireGuard generata (contiene chiavi private!)
-wireguard/config/
-
 # OS
 .DS_Store
 Thumbs.db
