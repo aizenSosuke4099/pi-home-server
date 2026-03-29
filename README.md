@@ -1,11 +1,10 @@
-# 🏠 Pi Home Server
+# Pi Home Server
 
-Stack completo per **Raspberry Pi 4 (2GB)** — blocco pubblicità a livello rete, DNS privato, VPN per accesso remoto e monitoraggio. Tutto in Docker, tutto in un comando.
+Stack per **Raspberry Pi 4 (2GB)** — blocco pubblicità, tracking, malware e phishing a livello rete + DNS privato. Tutto in Docker, tutto in un comando.
 
 ```
-Pi-hole ──→ blocca pubblicità per ogni dispositivo della rete
+Pi-hole ──→ blocca ads, tracking, malware e phishing per ogni dispositivo
 Unbound ──→ risolve i DNS localmente, senza passare da Google/Cloudflare
-WireGuard ─→ VPN: usi Pi-hole anche fuori casa
 Netdata ───→ dashboard CPU/RAM/rete in tempo reale (opzionale)
 ```
 
@@ -17,8 +16,8 @@ Netdata ───→ dashboard CPU/RAM/rete in tempo reale (opzionale)
 - [Installazione rapida](#installazione-rapida)
 - [Configurazione](#configurazione)
 - [Uso quotidiano](#uso-quotidiano)
-- [Connettere i client WireGuard](#connettere-i-client-wireguard)
 - [Dopo l'installazione](#dopo-linstallazione)
+- [Liste di blocco](#liste-di-blocco)
 - [Aggiornamento](#aggiornamento)
 - [Troubleshooting](#troubleshooting)
 - [Struttura del progetto](#struttura-del-progetto)
@@ -32,7 +31,6 @@ Netdata ───→ dashboard CPU/RAM/rete in tempo reale (opzionale)
 | Hardware | Raspberry Pi 4 (2GB RAM o più) |
 | Sistema operativo | Raspberry Pi OS Lite **64-bit** |
 | IP locale fisso | Impostalo nel router (DHCP reservation sull'indirizzo MAC del Pi) |
-| Porta aperta sul router | `51820/UDP` → per WireGuard dall'esterno |
 
 > **Perché IP fisso?** Il router deve sapere sempre dove trovare il Pi per instradare il DNS. Senza IP fisso, Pi-hole smette di funzionare al primo riavvio del router.
 
@@ -52,7 +50,7 @@ sudo bash scripts/install.sh
 Lo script fa tutto in automatico:
 1. Aggiorna il sistema operativo
 2. Installa Docker e Docker Compose
-3. Abilita l'IP forwarding (necessario per WireGuard)
+3. Abilita l'IP forwarding
 4. Chiede di compilare il file `.env` con le tue impostazioni
 5. Scarica le immagini Docker e avvia i container
 
@@ -70,36 +68,32 @@ nano .env
 | Variabile | Esempio | Descrizione |
 |---|---|---|
 | `PIHOLE_PASSWORD` | `miapassword` | Password per l'interfaccia web di Pi-hole |
-| `WG_SERVER_URL` | `auto` oppure `pippo.duckdns.org` | IP pubblico o dominio DuckDNS. `auto` lo rileva da solo |
-| `WG_PEERS` | `3` | Numero di client VPN da generare (uno per dispositivo: telefono, laptop, ecc.) |
-
-> **DuckDNS** è un servizio gratuito per avere un dominio fisso anche con IP pubblico dinamico. Registrati su [duckdns.org](https://www.duckdns.org) e usa il dominio come `WG_SERVER_URL`.
 
 ---
 
 ## Uso quotidiano
 
 ```bash
-# Avvia tutto lo stack
-docker compose up -d
+# Avvia lo stack
+sudo docker compose up -d
 
 # Avvia con Netdata (monitoraggio)
-docker compose --profile monitoring up -d
+sudo docker compose --profile monitoring up -d
 
 # Ferma tutto
-docker compose down
+sudo docker compose down
 
 # Riavvia un singolo servizio
-docker compose restart pihole
+sudo docker compose restart pihole
 
 # Controlla lo stato dei container
-docker compose ps
+sudo docker compose ps
 
-# Log in tempo reale (tutti i servizi)
-docker compose logs -f
+# Log in tempo reale
+sudo docker compose logs -f
 
 # Log di un singolo servizio
-docker compose logs -f pihole
+sudo docker compose logs -f pihole
 ```
 
 ### Interfacce web
@@ -109,36 +103,9 @@ docker compose logs -f pihole
 | Pi-hole (admin) | `http://<IP-del-pi>/admin` |
 | Netdata (monitoraggio) | `http://<IP-del-pi>:19999` |
 
-Sostituisci `<IP-del-pi>` con l'indirizzo locale del tuo Raspberry (es. `192.168.1.100`).
+Sostituisci `<IP-del-pi>` con l'indirizzo locale del tuo Raspberry (es. `192.168.1.40`).
 
----
-
-## Connettere i client WireGuard
-
-WireGuard genera automaticamente le configurazioni per ogni client (peer).
-
-### Da telefono (QR code)
-
-```bash
-# Mostra il QR code per il primo client
-docker exec wireguard /app/show-peer peer1
-
-# Per il secondo client
-docker exec wireguard /app/show-peer peer2
-```
-
-Scansiona il QR code con l'app **WireGuard** (iOS / Android).
-
-### Da computer (file di configurazione)
-
-```bash
-# Copia il file di configurazione sul tuo computer
-scp pi@<IP-del-pi>:~/pi-home-server/wireguard/config/peer1/peer1.conf ~/Desktop/
-```
-
-Importa il file nell'app WireGuard sul tuo computer.
-
-> Una volta connesso alla VPN, tutto il traffico passa per Pi-hole → pubblicità bloccata anche fuori casa.
+> **Nota**: Chrome potrebbe forzare HTTPS sugli indirizzi IP. Usa Safari o Firefox, oppure disabilita "HTTPS Upgrades" in `chrome://flags`.
 
 ---
 
@@ -146,20 +113,49 @@ Importa il file nell'app WireGuard sul tuo computer.
 
 ### Imposta il DNS sul router
 
-Entra nel pannello del router → cerca "DNS primario" → inserisci l'IP del Raspberry Pi.
+Entra nel pannello del router → cerca "DNS primario" nella sezione DHCP → inserisci l'IP del Raspberry Pi.
 
 In questo modo **tutti i dispositivi della rete** (TV, telefoni, PC) useranno automaticamente Pi-hole senza configurare nulla sui singoli dispositivi.
 
-### Aggiungi liste di blocco extra su Pi-hole
+---
 
-1. Vai su `http://<IP-del-pi>/admin`
-2. Login con la password impostata nel `.env`
-3. **Group Management → Adlists** → aggiungi le liste che vuoi
+## Liste di blocco
 
-Liste consigliate:
-- `https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts` (già inclusa)
-- `https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt`
-- `https://blocklistproject.github.io/Lists/tracking.txt`
+Pi-hole include una lista base da ~87k domini. Per una protezione completa, aggiungi queste liste in **Adlists → Add blocklist**:
+
+### Ads e tracking
+
+| Lista | Descrizione |
+|---|---|
+| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt` | Hagezi Pro — ads + tracking aggressivo |
+| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/multi.txt` | Hagezi Multi — ads, tracking, malware, phishing |
+| `https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt` | Ad server noti |
+| `https://blocklistproject.github.io/Lists/tracking.txt` | Tracker comportamentali |
+| `https://blocklistproject.github.io/Lists/ads.txt` | Reti pubblicitarie |
+
+### Sicurezza
+
+| Lista | Descrizione |
+|---|---|
+| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/tif.txt` | Threat Intelligence Feeds — malware e phishing |
+| `https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt` | Anti-malware |
+| `https://malware-filter.gitlab.io/malware-filter/phishing-filter-hosts.txt` | Filtro phishing |
+| `https://urlhaus.abuse.ch/downloads/hostfile/` | URL malevoli (abuse.ch) |
+
+### Extra
+
+| Lista | Descrizione |
+|---|---|
+| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt` | Blocca DNS-over-HTTPS di terze parti (forza uso di Unbound) |
+| `https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/native.tiktok.extended.txt` | Tracker TikTok |
+| `https://raw.githubusercontent.com/nicotsx/italian-pihole-lists/main/hosts.txt` | Ads e tracking su siti italiani |
+| `https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts` | Lista globale extra |
+
+Dopo aver aggiunto le liste → **Tools → Update Gravity**.
+
+Le liste si aggiornano automaticamente una volta alla settimana. Con tutte le liste attive si arriva a **1.5M+ domini bloccati**.
+
+> Se un sito non funziona, vai su **Query Log** → trova la richiesta bloccata → clicca per aggiungerla alla allowlist.
 
 ---
 
@@ -175,36 +171,35 @@ Scarica le nuove versioni dei container, riavvia lo stack e pulisce le immagini 
 
 ## Troubleshooting
 
-### Pi-hole non risolve i siti (solo blocca tutto)
+### Pi-hole non risolve i siti (blocca tutto)
 
 Unbound potrebbe non essere partito. Controlla:
 
 ```bash
-docker compose logs unbound
-docker compose restart unbound
+sudo docker compose logs unbound
+sudo docker compose restart unbound
 ```
-
-### WireGuard non si connette dall'esterno
-
-- Verifica che la porta `51820/UDP` sia aperta nel router (port forwarding → IP del Pi)
-- Controlla che `WG_SERVER_URL` nel `.env` sia il tuo IP pubblico corretto:
-  ```bash
-  curl ifconfig.me
-  ```
 
 ### Pi-hole non vede le richieste DNS dei dispositivi
 
-Il router non sta usando Pi-hole come DNS. Verifica le impostazioni DNS nel pannello del router.
+Il router non sta usando Pi-hole come DNS. Verifica le impostazioni DNS nel pannello del router (sezione DHCP → DNS primario → IP del Pi).
 
-### Vedo i container ma non riesco ad accedere all'interfaccia web
+### Non riesco ad accedere all'interfaccia web
 
 ```bash
 # Controlla che i container siano running
-docker compose ps
+sudo docker compose ps
 
 # Controlla i log di Pi-hole
-docker compose logs pihole
+sudo docker compose logs pihole
+
+# Verifica che Pi-hole risponda
+curl -I http://localhost/admin/
 ```
+
+### Chrome non apre la pagina di Pi-hole
+
+Chrome forza HTTPS sugli IP locali. Usa Safari/Firefox oppure disabilita "HTTPS Upgrades" in `chrome://flags`.
 
 ---
 
@@ -213,35 +208,33 @@ docker compose logs pihole
 ```
 pi-home-server/
 │
-├── docker-compose.yml       ← definizione dell'intero stack
-├── .env.example             ← template variabili (copia in .env)
-├── .gitignore               ← esclude .env e dati runtime
+├── docker-compose.yml       <- definizione dell'intero stack
+├── .env.example             <- template variabili (copia in .env)
+├── .gitignore               <- esclude .env e dati runtime
 │
 ├── unbound/
-│   └── unbound.conf         ← configurazione DNS resolver locale
+│   └── unbound.conf         <- configurazione DNS resolver locale
 │
-├── pihole/                  ← dati Pi-hole (generati al primo avvio, gitignored)
-├── wireguard/               ← configurazioni VPN (generati al primo avvio, gitignored)
+├── pihole/                  <- dati Pi-hole (generati al primo avvio, gitignored)
 │
 └── scripts/
-    ├── install.sh           ← installazione completa (Docker + avvio stack)
-    └── update.sh            ← aggiornamento container
+    ├── install.sh           <- installazione completa (Docker + avvio stack)
+    └── update.sh            <- aggiornamento container
 ```
 
 ---
 
-## Come funziona (in breve)
+## Come funziona
 
 ```
-Dispositivo → Router → Pi-hole → Unbound → Internet
-                          ↓
-                    blocca le pubblicità
-                    prima che partano
+Dispositivo -> Router -> Pi-hole -> Unbound -> Internet
+                            |
+                      blocca ads, tracking,
+                      malware e phishing
+                      prima che partano
 ```
 
 1. Il **router** manda tutte le richieste DNS al Pi
-2. **Pi-hole** controlla se il dominio è nella lista nera → se sì, blocca
+2. **Pi-hole** controlla se il dominio è in una delle liste di blocco → se sì, blocca
 3. Se non è bloccato, passa la richiesta a **Unbound**
-4. **Unbound** risolve direttamente i DNS senza passare da Google o Cloudflare
-
-Con **WireGuard** attivo sul telefono, lo stesso percorso vale anche fuori casa.
+4. **Unbound** risolve direttamente i DNS interrogando i root server, senza passare da Google o Cloudflare
