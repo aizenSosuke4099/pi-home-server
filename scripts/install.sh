@@ -39,7 +39,25 @@ else
     info "Docker Compose già disponibile — skip."
 fi
 
-# ── 5. File .env ────────────────────────────────────────────
+# ── 5. Abilita IP forwarding (necessario per WireGuard) ─────
+info "Abilitazione IP forwarding..."
+grep -qxF 'net.ipv4.ip_forward=1' /etc/sysctl.conf \
+    || echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+sysctl -w net.ipv4.ip_forward=1 -q
+# Abilita anche NAT per traffico WireGuard
+if ! iptables -t nat -C POSTROUTING -s 10.13.13.0/24 -o eth0 -j MASQUERADE 2>/dev/null; then
+    iptables -t nat -A POSTROUTING -s 10.13.13.0/24 -o eth0 -j MASQUERADE
+    info "Regola NAT per WireGuard aggiunta."
+fi
+# Rendi la regola persistente
+if command -v netfilter-persistent &>/dev/null; then
+    netfilter-persistent save -q 2>/dev/null || true
+else
+    apt-get install -y -qq iptables-persistent
+    netfilter-persistent save -q 2>/dev/null || true
+fi
+
+# ── 6. File .env ────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
@@ -68,6 +86,9 @@ echo -e "${GREEN}║        Installazione completata!         ║${NC}"
 echo -e "${GREEN}╚══════════════════════════════════════════╝${NC}"
 echo ""
 echo "  Pi-hole admin:  http://$(hostname -I | awk '{print $1}')/admin"
+echo "  Homepage:       http://$(hostname -I | awk '{print $1}'):3000"
+echo "  Uptime Kuma:    http://$(hostname -I | awk '{print $1}'):3001"
 echo "  Netdata:        http://$(hostname -I | awk '{print $1}'):19999  (se attivo)"
+echo "  WireGuard QR:   sudo docker exec wireguard /app/show-peer <nome>"
 echo ""
 info "Imposta il DNS del router su: $(hostname -I | awk '{print $1}')"

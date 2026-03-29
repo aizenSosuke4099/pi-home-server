@@ -7,6 +7,9 @@ pihole/etc-pihole/
 # Dati runtime servizi
 uptime-kuma/data/
 
+# Config WireGuard (contiene chiavi private!)
+wireguard/config/
+
 # OS
 .DS_Store
 Thumbs.db
