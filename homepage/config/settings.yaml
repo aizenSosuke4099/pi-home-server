@@ -1,0 +1,11 @@
+title: Pi Home Server
+theme: dark
+color: slate
+headerStyle: clean
+layout:
+  Rete:
+    style: row
+    columns: 2
+  Monitoraggio:
+    style: row
+    columns: 3

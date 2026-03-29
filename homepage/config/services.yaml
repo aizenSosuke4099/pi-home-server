@@ -1,0 +1,37 @@
+- Rete:
+    - Pi-hole:
+        href: http://192.168.1.40/admin
+        description: Blocco ads e DNS
+        icon: pi-hole
+        widget:
+          type: pihole
+          url: http://pihole
+          key: "{{HOMEPAGE_VAR_PIHOLE_KEY}}"
+
+    - Unbound:
+        href: "#"
+        description: DNS resolver privato
+        icon: dns
+
+- Monitoraggio:
+    - Uptime Kuma:
+        href: http://192.168.1.40:3001
+        description: Stato dei servizi
+        icon: uptime-kuma
+        widget:
+          type: uptimekuma
+          url: http://uptime-kuma:3001
+          slug: default
+
+    - Speedtest:
+        href: http://192.168.1.40:8080
+        description: Velocità internet
+        icon: speedtest-tracker
+        widget:
+          type: speedtest
+          url: http://speedtest
+
+    - Netdata:
+        href: http://192.168.1.40:19999
+        description: CPU, RAM, temperatura
+        icon: netdata

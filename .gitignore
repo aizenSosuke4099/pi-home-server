@@ -4,6 +4,10 @@
 # Dati runtime Pi-hole
 pihole/etc-pihole/
 
+# Dati runtime servizi
+uptime-kuma/data/
+speedtest/data/
+
 # OS
 .DS_Store
 Thumbs.db
