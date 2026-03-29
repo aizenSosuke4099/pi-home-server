@@ -66,6 +66,7 @@ https://v.firebog.net/hosts/neohostsbasic.txt
 
 # ── DNS bypass e crypto mining ─────────────────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt
+https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh-vpn-proxy-bypass.txt
 
 # ── Popup, fake e ransomware ──────────────────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/popupads.txt
