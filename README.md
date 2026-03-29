@@ -1,11 +1,14 @@
 # Pi Home Server
 
-Stack per **Raspberry Pi 4 (2GB)** — blocco pubblicità, tracking, malware e phishing a livello rete + DNS privato. Tutto in Docker, tutto in un comando.
+Stack per **Raspberry Pi 4 (2GB)** — blocco pubblicità, tracking, malware e phishing a livello rete + DNS privato + dashboard e monitoraggio. Tutto in Docker, tutto in un comando.
 
 ```
-Pi-hole ──→ blocca ads, tracking, malware e phishing per ogni dispositivo
-Unbound ──→ risolve i DNS localmente, senza passare da Google/Cloudflare
-Netdata ───→ dashboard CPU/RAM/rete in tempo reale (opzionale)
+Pi-hole ──────→ blocca ads, tracking, malware e phishing per ogni dispositivo
+Unbound ──────→ risolve i DNS localmente, senza passare da Google/Cloudflare
+Homepage ─────→ dashboard unica con tutti i servizi
+Uptime Kuma ──→ monitora se i servizi sono online
+Watchtower ───→ aggiorna i container automaticamente ogni notte
+Netdata ──────→ dashboard CPU/RAM/rete in tempo reale (opzionale)
 ```
 
 ---
@@ -18,6 +21,7 @@ Netdata ───→ dashboard CPU/RAM/rete in tempo reale (opzionale)
 - [Uso quotidiano](#uso-quotidiano)
 - [Dopo l'installazione](#dopo-linstallazione)
 - [Liste di blocco](#liste-di-blocco)
+- [Uptime Kuma](#uptime-kuma)
 - [Aggiornamento](#aggiornamento)
 - [Troubleshooting](#troubleshooting)
 - [Struttura del progetto](#struttura-del-progetto)
@@ -50,9 +54,9 @@ sudo bash scripts/install.sh
 Lo script fa tutto in automatico:
 1. Aggiorna il sistema operativo
 2. Installa Docker e Docker Compose
-3. Abilita l'IP forwarding
-4. Chiede di compilare il file `.env` con le tue impostazioni
-5. Scarica le immagini Docker e avvia i container
+3. Chiede di compilare il file `.env` con le tue impostazioni
+4. Scarica le immagini Docker e avvia i container
+5. Importa 52 liste di blocco in Pi-hole
 
 ---
 
@@ -67,7 +71,7 @@ nano .env
 
 | Variabile | Esempio | Descrizione |
 |---|---|---|
-| `PIHOLE_PASSWORD` | `miapassword` | Password per l'interfaccia web di Pi-hole |
+| `PIHOLE_PASSWORD` | `miapassword` | Password per Pi-hole (usata anche da Homepage per i widget) |
 
 ---
 
@@ -77,7 +81,7 @@ nano .env
 # Avvia lo stack
 sudo docker compose up -d
 
-# Avvia con Netdata (monitoraggio)
+# Avvia con Netdata (monitoraggio hardware)
 sudo docker compose --profile monitoring up -d
 
 # Ferma tutto
@@ -98,24 +102,49 @@ sudo docker compose logs -f pihole
 
 ### Interfacce web
 
-| Servizio | URL |
-|---|---|
-| Pi-hole (admin) | `http://<IP-del-pi>/admin` |
-| Netdata (monitoraggio) | `http://<IP-del-pi>:19999` |
+| Servizio | URL | Descrizione |
+|---|---|---|
+| Homepage | `http://<IP-del-pi>:3000` | Dashboard unica con tutti i servizi |
+| Pi-hole | `http://<IP-del-pi>/admin` | Gestione blocco DNS |
+| Uptime Kuma | `http://<IP-del-pi>:3001` | Monitoraggio uptime servizi |
+| Netdata | `http://<IP-del-pi>:19999` | CPU, RAM, temperatura (se attivo) |
 
 Sostituisci `<IP-del-pi>` con l'indirizzo locale del tuo Raspberry (es. `192.168.1.40`).
 
 > **Nota**: Chrome potrebbe forzare HTTPS sugli indirizzi IP. Usa Safari o Firefox, oppure disabilita "HTTPS Upgrades" in `chrome://flags`.
 
+### Servizi automatici
+
+| Servizio | Cosa fa |
+|---|---|
+| **Watchtower** | Aggiorna tutti i container ogni notte alle 4:00 e pulisce le immagini vecchie |
+| **Pi-hole Gravity** | Aggiorna le liste di blocco automaticamente una volta alla settimana |
+
+Non serve fare nulla, girano da soli.
+
 ---
 
 ## Dopo l'installazione
 
-### Imposta il DNS sul router
+### 1. Imposta il DNS sul router
 
 Entra nel pannello del router → cerca "DNS primario" nella sezione DHCP → inserisci l'IP del Raspberry Pi.
 
 In questo modo **tutti i dispositivi della rete** (TV, telefoni, PC) useranno automaticamente Pi-hole senza configurare nulla sui singoli dispositivi.
+
+### 2. Configura Homepage
+
+Homepage si apre su `http://<IP-del-pi>:3000` ed e' gia' configurata con i widget di Pi-hole, Uptime Kuma e Netdata. La password di Pi-hole viene letta automaticamente dal `.env`.
+
+### 3. Configura Uptime Kuma
+
+Vai su `http://<IP-del-pi>:3001`, crea un account al primo accesso, poi aggiungi i monitor:
+
+| Monitor | Tipo | Impostazioni |
+|---|---|---|
+| Pi-hole | HTTP(s) | URL: `http://<IP-del-pi>/admin` |
+| Unbound | DNS | Hostname: `google.com`, Server: `172.20.0.3`, Porta: `5335` |
+| Homepage | HTTP(s) | URL: `http://<IP-del-pi>:3000` |
 
 ---
 
@@ -148,11 +177,13 @@ sudo bash scripts/setup-adlists.sh
 
 ## Aggiornamento
 
+I container si aggiornano automaticamente grazie a **Watchtower** (ogni notte alle 4:00).
+
+Per un aggiornamento manuale:
+
 ```bash
 sudo bash scripts/update.sh
 ```
-
-Scarica le nuove versioni dei container, riavvia lo stack e pulisce le immagini vecchie.
 
 ---
 
@@ -188,24 +219,44 @@ curl -I http://localhost/admin/
 
 Chrome forza HTTPS sugli IP locali. Usa Safari/Firefox oppure disabilita "HTTPS Upgrades" in `chrome://flags`.
 
+### Homepage mostra "Host validation failed"
+
+Verifica che `HOMEPAGE_ALLOWED_HOSTS` nel docker-compose includa il tuo IP. Se hai un IP diverso da `192.168.1.40`, modificalo nel docker-compose e nel file `homepage/config/services.yaml`.
+
+### Permessi negati su git pull
+
+Docker crea file come root. Risolvi con:
+
+```bash
+sudo chown -R pi:pi ~/pi-home-server
+git stash
+git pull
+```
+
 ---
 
 ## Struttura del progetto
 
 ```
 pi-home-server/
-│
+|
 ├── docker-compose.yml       <- definizione dell'intero stack
 ├── .env.example             <- template variabili (copia in .env)
 ├── .gitignore               <- esclude .env e dati runtime
-│
+|
 ├── unbound/
 │   └── unbound.conf         <- configurazione DNS resolver locale
-│
+|
 ├── pihole/
 │   ├── adlists.txt          <- 52 liste di blocco pre-configurate
 │   └── etc-pihole/          <- dati Pi-hole (generati al primo avvio, gitignored)
-│
+|
+├── homepage/
+│   └── config/              <- configurazione dashboard Homepage
+|
+├── uptime-kuma/
+│   └── data/                <- dati Uptime Kuma (gitignored)
+|
 └── scripts/
     ├── install.sh           <- installazione completa (Docker + avvio stack)
     ├── setup-adlists.sh     <- importa le liste di blocco in Pi-hole
@@ -225,6 +276,8 @@ Dispositivo -> Router -> Pi-hole -> Unbound -> Internet
 ```
 
 1. Il **router** manda tutte le richieste DNS al Pi
-2. **Pi-hole** controlla se il dominio è in una delle liste di blocco → se sì, blocca
-3. Se non è bloccato, passa la richiesta a **Unbound**
+2. **Pi-hole** controlla se il dominio e' in una delle liste di blocco → se si, blocca
+3. Se non e' bloccato, passa la richiesta a **Unbound**
 4. **Unbound** risolve direttamente i DNS interrogando i root server, senza passare da Google o Cloudflare
+5. **Watchtower** aggiorna tutto automaticamente ogni notte
+6. **Homepage** mostra lo stato di tutti i servizi in una dashboard unica

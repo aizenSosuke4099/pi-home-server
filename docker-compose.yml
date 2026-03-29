@@ -72,6 +72,7 @@ services:
       - "3000:3000"
     environment:
       HOMEPAGE_ALLOWED_HOSTS: "192.168.1.40:3000,localhost:3000"
+      HOMEPAGE_VAR_PIHOLE_KEY: "${PIHOLE_PASSWORD}"
     volumes:
       - ./homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
