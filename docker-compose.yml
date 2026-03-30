@@ -24,6 +24,7 @@ services:
       FTLCONF_dns_listeningMode: "all"
     volumes:
       - ./pihole/etc-pihole:/etc/pihole
+      - ./pihole/custom-hosts.txt:/etc/pihole/custom.list
     networks:
       dns_net:
         ipv4_address: 172.20.0.2
