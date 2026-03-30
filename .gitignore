@@ -3,6 +3,7 @@
 
 # Dati runtime Pi-hole
 pihole/etc-pihole/
+pihole/custom-hosts.txt
 
 # Dati runtime servizi
 uptime-kuma/data/
