@@ -13,6 +13,8 @@
         href: "#"
         description: DNS resolver privato
         icon: dns
+        server: my-docker
+        container: unbound
 
 - Monitoraggio:
     - Uptime Kuma:
