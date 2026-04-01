@@ -1,8 +1,22 @@
 # Regex deny — domini bloccati manualmente
 # Importare in Pi-hole → Domains → Regex deny
+
+# ── Tracking e telemetria ────────────────────────────────
 (\.|^)raitvpiu\.servicebus\.windows\.net$
 (\.|^)rebuyengine\.com$
 (\.|^)geo\.rebuyengine\.com$
 (\.|^)idb\.iubenda\.com$
 (\.|^)cdn\.adscale\.com$
 (\.|^)6af2cd3d-2ef8-45e2-8eb3-2cace471115c-netseer-ipaddr-assoc\.xz\.fbcdn\.net$
+(\.|^)api\.snapkit\.com$
+(\.|^)dcg\.microsoft\.com$
+(\.|^)ab\.chatgpt\.com$
+
+# ── Fire TV telemetria ───────────────────────────────────
+(\.|^)firetvcaptiveportal\.com$
+(\.|^)msh\.amazon\.co\.uk$
+(\.|^)ktpx-eu-south-2\.amazon\.com$
+(\.|^)arcus-uswest\.amazon\.com$
+
+# ── IoT telemetria ───────────────────────────────────────
+(\.|^)ntp\.vesync\.com$
