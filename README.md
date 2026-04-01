@@ -56,7 +56,7 @@ Lo script fa tutto in automatico:
 2. Installa Docker e Docker Compose
 3. Chiede di compilare il file `.env` con le tue impostazioni
 4. Scarica le immagini Docker e avvia i container
-5. Importa 50 liste di blocco in Pi-hole
+5. Importa 51 liste di blocco in Pi-hole
 
 ---
 
@@ -189,7 +189,7 @@ Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
 
 ## Liste di blocco
 
-Lo script `install.sh` importa automaticamente **50 liste** da `pihole/adlists.txt`, coprendo:
+Lo script `install.sh` importa automaticamente **51 liste** da `pihole/adlists.txt`, coprendo:
 
 | Categoria | Fonti |
 |---|---|
@@ -288,7 +288,7 @@ pi-home-server/
 │   └── unbound.conf         <- configurazione DNS resolver locale
 |
 ├── pihole/
-│   ├── adlists.txt          <- 50 liste di blocco pre-configurate
+│   ├── adlists.txt          <- 51 liste di blocco pre-configurate
 │   └── etc-pihole/          <- dati Pi-hole (generati al primo avvio, gitignored)
 |
 ├── homepage/

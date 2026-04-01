@@ -70,5 +70,8 @@ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/doh.txt
 # ── Ransomware ────────────────────────────────────────────
 https://raw.githubusercontent.com/blocklistproject/Lists/master/ransomware.txt
 
+# ── Ads mobile/app ───────────────────────────────────────
+https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt
+
 # ── Catch-all aggressiva (Hagezi Ultimate) ─────────────────
 https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/ultimate.txt
