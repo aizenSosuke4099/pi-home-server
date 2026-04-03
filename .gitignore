@@ -11,6 +11,10 @@ uptime-kuma/data/
 # Config WireGuard (contiene chiavi private!)
 wireguard/config/
 
+# Nginx Proxy Manager (contiene certificati e config)
+npm/data/
+npm/letsencrypt/
+
 # OS
 .DS_Store
 Thumbs.db

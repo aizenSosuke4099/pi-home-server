@@ -5,6 +5,7 @@ Stack per **Raspberry Pi 4 (2GB)** — blocco pubblicità, tracking, malware e p
 ```
 Pi-hole ──────→ blocca ads, tracking, malware e phishing per ogni dispositivo
 Unbound ──────→ risolve i DNS localmente, senza passare da Google/Cloudflare
+NPM ──────────→ reverse proxy HTTPS con certificato Let's Encrypt
 Homepage ─────→ dashboard unica con tutti i servizi
 Uptime Kuma ──→ monitora se i servizi sono online
 Watchtower ───→ aggiorna i container automaticamente ogni notte
@@ -109,10 +110,11 @@ sudo docker compose logs -f pihole
 
 | Servizio | URL | Descrizione |
 |---|---|---|
-| Homepage | `http://<IP-del-pi>:3000` | Dashboard unica con tutti i servizi |
-| Pi-hole | `http://<IP-del-pi>/admin` | Gestione blocco DNS |
-| Uptime Kuma | `http://<IP-del-pi>:3001` | Monitoraggio uptime servizi |
-| Netdata | `http://<IP-del-pi>:19999` | CPU, RAM, temperatura (se attivo) |
+| NPM Admin | `http://<IP-del-pi>:81` | Gestione reverse proxy e certificati HTTPS |
+| Homepage | `https://home.<subdomain>.duckdns.org` | Dashboard unica con tutti i servizi |
+| Pi-hole | `https://pihole.<subdomain>.duckdns.org` | Gestione blocco DNS |
+| Uptime Kuma | `https://kuma.<subdomain>.duckdns.org` | Monitoraggio uptime servizi |
+| Netdata | `https://netdata.<subdomain>.duckdns.org` | CPU, RAM, temperatura (se attivo) |
 
 Sostituisci `<IP-del-pi>` con l'indirizzo locale del tuo Raspberry (es. `192.168.1.40`).
 
@@ -158,7 +160,34 @@ Vai su `http://<IP-del-pi>:3001`, crea un account al primo accesso, poi aggiungi
 | Unbound | DNS | Hostname: `google.com`, Server: `172.20.0.3`, Porta: `5335` |
 | Homepage | HTTP(s) | URL: `http://<IP-del-pi>:3000` |
 
-### 4. Configura WireGuard
+### 4. Configura Nginx Proxy Manager (HTTPS)
+
+Vai su `http://<IP-del-pi>:81` e accedi con le credenziali di default:
+- Email: `admin@example.com`
+- Password: `changeme`
+
+Cambia subito email e password al primo login.
+
+#### Aggiungere un servizio HTTPS
+
+Per ogni servizio (Pi-hole, Homepage, Kuma, Netdata):
+
+1. **Proxy Hosts** → Add Proxy Host
+2. **Domain Names**: `pihole.<subdomain>.duckdns.org`
+3. **Forward Hostname**: `pihole` (nome del container)
+4. **Forward Port**: `80` (porta interna del container)
+5. Tab **SSL** → Request a new SSL Certificate → Force SSL → Save
+
+| Servizio | Domain | Forward Host | Forward Port |
+|---|---|---|---|
+| Pi-hole | `pihole.<sub>.duckdns.org` | `pihole` | `80` |
+| Homepage | `home.<sub>.duckdns.org` | `homepage` | `3000` |
+| Uptime Kuma | `kuma.<sub>.duckdns.org` | `uptime-kuma` | `3001` |
+| Netdata | `netdata.<sub>.duckdns.org` | `netdata` | `19999` |
+
+> **Nota**: Per i certificati DuckDNS usa la DNS Challenge: SSL → Use a DNS Challenge → DuckDNS → inserisci il tuo token.
+
+### 5. Configura WireGuard
 
 Dopo l'avvio, mostra il QR code per connettere i dispositivi:
 
@@ -178,7 +207,7 @@ Scansiona il QR con l'app **WireGuard** (iOS / Android). Per usare WireGuard da 
 | Protocollo | **UDP** |
 | IP destinazione | IP del Pi |
 
-### 5. Port forwarding sul router
+### 6. Port forwarding sul router
 
 Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
 - Porta esterna/interna: `40959`
@@ -307,6 +336,10 @@ pi-home-server/
 ├── homepage/
 │   └── config/              <- configurazione dashboard Homepage
 |
+├── npm/
+│   ├── data/                <- config NPM (gitignored)
+│   └── letsencrypt/         <- certificati SSL (gitignored)
+|
 ├── uptime-kuma/
 │   └── data/                <- dati Uptime Kuma (gitignored)
 |
@@ -323,9 +356,9 @@ pi-home-server/
 ```
 Dispositivo -> Router -> Pi-hole -> Unbound -> Internet
                             |
-                      blocca ads, tracking,
-                      malware e phishing
-                      prima che partano
+                      blocca ads, tracking,       Browser -> NPM (443) -> Servizio
+                      malware e phishing                      |
+                      prima che partano              HTTPS con Let's Encrypt
 ```
 
 1. Il **router** manda tutte le richieste DNS al Pi

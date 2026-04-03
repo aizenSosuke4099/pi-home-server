@@ -16,6 +16,13 @@
         server: my-docker
         container: unbound
 
+    - Nginx Proxy Manager:
+        href: http://PI_IP_ADDRESS:81
+        description: Reverse proxy HTTPS
+        icon: nginx-proxy-manager
+        server: my-docker
+        container: npm
+
 - Monitoraggio:
     - Uptime Kuma:
         href: http://PI_IP_ADDRESS:3001

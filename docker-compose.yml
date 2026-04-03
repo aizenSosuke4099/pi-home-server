@@ -15,7 +15,7 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "80:80/tcp"
+      # porta 80 gestita da Nginx Proxy Manager — Pi-hole raggiungibile solo via rete interna
     environment:
       TZ: "Europe/Rome"
       FTLCONF_webserver_api_password: "${PIHOLE_PASSWORD}"
@@ -120,7 +120,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: "${PI_IP}:3000,localhost:3000"
+      HOMEPAGE_ALLOWED_HOSTS: "${PI_IP}:3000,localhost:3000,home.${DUCKDNS_SUBDOMAIN}.duckdns.org"
       HOMEPAGE_VAR_PIHOLE_KEY: "${PIHOLE_PASSWORD}"
     volumes:
       - ./homepage/config:/app/config
@@ -128,6 +128,22 @@ services:
     networks:
       dns_net:
         ipv4_address: 172.20.0.9
+
+  # ─── Nginx Proxy Manager (reverse proxy + HTTPS) ──────────────────────────
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: npm
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "81:81"             # pannello admin NPM
+    volumes:
+      - ./npm/data:/data
+      - ./npm/letsencrypt:/etc/letsencrypt
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.11
 
   # ─── Watchtower (auto-update container) ───────────────────────────────────
   watchtower:
