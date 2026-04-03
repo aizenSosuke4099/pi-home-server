@@ -213,6 +213,17 @@ sudo bash scripts/setup-adlists.sh
 
 > Se un sito non funziona, vai su **Query Log** → trova la richiesta bloccata → clicca per aggiungerla alla allowlist.
 
+### Allowlist
+
+Alcuni domini sono necessari per il funzionamento di servizi e vanno sbloccati. La lista è in `pihole/allowlist.txt`:
+
+| Dominio | Motivo |
+|---|---|
+| `graph.facebook.com` | Commenti Facebook |
+| `firetvcaptiveportal.com` | Connessione Fire TV |
+
+Per importarli: Pi-hole → Domains → aggiungi come **Exact allow**.
+
 ---
 
 ## Aggiornamento
@@ -289,6 +300,8 @@ pi-home-server/
 |
 ├── pihole/
 │   ├── adlists.txt          <- 51 liste di blocco pre-configurate
+│   ├── regex-blocklist.txt  <- regex deny per telemetria e tracking
+│   ├── allowlist.txt        <- domini sbloccati (Facebook, Fire TV)
 │   └── etc-pihole/          <- dati Pi-hole (generati al primo avvio, gitignored)
 |
 ├── homepage/
