@@ -1,9 +1,20 @@
 # Domini in allowlist — necessari per il funzionamento di servizi
 # Importare in Pi-hole → Domains → Exact allow
 
-# ── Facebook ─────────────────────────────────────────────────
+# ── Facebook / Instagram ─────────────────────────────────────
 graph.facebook.com
+gateway.instagram.com
+graph.instagram.com
+
+# ── WhatsApp ─────────────────────────────────────────────────
+dit.whatsapp.net
+graph.whatsapp.com
 
 # ── Fire TV ──────────────────────────────────────────────────
 firetvcaptiveportal.com
-dcape-na.amazon.com
+
+# ── Apple ────────────────────────────────────────────────────
+xp.apple.com
+
+# ── Firebase ─────────────────────────────────────────────────
+firebaseinstallations.googleapis.com

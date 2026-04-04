@@ -249,8 +249,13 @@ Alcuni domini sono necessari per il funzionamento di servizi e vanno sbloccati. 
 | Dominio | Motivo |
 |---|---|
 | `graph.facebook.com` | Commenti Facebook |
+| `gateway.instagram.com` | Feed Instagram |
+| `graph.instagram.com` | API Instagram |
+| `dit.whatsapp.net` | WhatsApp (evita retry continui) |
+| `graph.whatsapp.com` | WhatsApp funzionalità |
 | `firetvcaptiveportal.com` | Connessione Fire TV |
-| `dcape-na.amazon.com` | Device capabilities Fire TV |
+| `xp.apple.com` | App Store, notifiche iOS |
+| `firebaseinstallations.googleapis.com` | App che usano Firebase |
 
 Per importarli: Pi-hole → Domains → aggiungi come **Exact allow**.
 
