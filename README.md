@@ -250,6 +250,7 @@ Alcuni domini sono necessari per il funzionamento di servizi e vanno sbloccati. 
 |---|---|
 | `graph.facebook.com` | Commenti Facebook |
 | `firetvcaptiveportal.com` | Connessione Fire TV |
+| `dcape-na.amazon.com` | Device capabilities Fire TV |
 
 Per importarli: Pi-hole → Domains → aggiungi come **Exact allow**.
 

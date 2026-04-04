@@ -2,9 +2,8 @@
 # Importare in Pi-hole → Domains → Exact allow
 
 # ── Facebook ─────────────────────────────────────────────────
-# Senza questo dominio i commenti Facebook non funzionano
 graph.facebook.com
 
 # ── Fire TV ──────────────────────────────────────────────────
-# Captive portal check — senza questo la Fire TV non si connette
 firetvcaptiveportal.com
+dcape-na.amazon.com

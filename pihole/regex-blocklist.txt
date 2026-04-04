@@ -2,7 +2,7 @@
 # Importare in Pi-hole → Domains → Regex deny
 
 # ── Tracking e telemetria ────────────────────────────────
-(\.|^)raitvpiu\.servicebus\.windows\.net$
+(\.|^)raitvpiu[0-9]*\.servicebus\.windows\.net$
 (\.|^)rebuyengine\.com$
 (\.|^)geo\.rebuyengine\.com$
 (\.|^)idb\.iubenda\.com$
@@ -11,12 +11,23 @@
 (\.|^)api\.snapkit\.com$
 (\.|^)dcg\.microsoft\.com$
 (\.|^)ab\.chatgpt\.com$
+(\.|^)browser-intake-us5-datadoghq\.com$
+(\.|^)api3\.siftscience\.com$
+(\.|^)statsig\.anthropic\.com$
+(\.|^)app-measurement\.com$
+(\.|^)app-analytics-services\.com$
+(\.|^)firebaselogging-pa\.googleapis\.com$
+(\.|^)in\.appcenter\.ms$
 
 # ── Fire TV telemetria ───────────────────────────────────
-(\.|^)firetvcaptiveportal\.com$
 (\.|^)msh\.amazon\.co\.uk$
+(\.|^)msh\.amazon\.com$
 (\.|^)ktpx-eu-south-2\.amazon\.com$
 (\.|^)arcus-uswest\.amazon\.com$
+(\.|^)global\.telemetry\.insights\.video\.a2z\.com$
+(\.|^)digprjsurvey\.amazon\.co\.uk$
+(\.|^)dcape-na\.amazon\.com$
+(\.|^)eu\.prism\.digital\.amazon\.dev$
 
 # ── IoT telemetria ───────────────────────────────────────
 (\.|^)ntp\.vesync\.com$
