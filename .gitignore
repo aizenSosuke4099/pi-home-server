@@ -5,6 +5,9 @@
 pihole/etc-pihole/
 pihole/custom-hosts.txt
 
+# Config dnsmasq personali (IP/subdomain locali) — committa solo il .example
+pihole/dnsmasq/*.conf
+
 # Dati runtime servizi
 uptime-kuma/data/
 

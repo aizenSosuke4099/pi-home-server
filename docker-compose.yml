@@ -25,6 +25,7 @@ services:
     volumes:
       - ./pihole/etc-pihole:/etc/pihole
       - ./pihole/custom-hosts.txt:/etc/pihole/custom.list
+      - ./pihole/dnsmasq:/etc/dnsmasq.d          # config dnsmasq custom (es. DNS locale split-horizon)
     networks:
       dns_net:
         ipv4_address: 172.20.0.2

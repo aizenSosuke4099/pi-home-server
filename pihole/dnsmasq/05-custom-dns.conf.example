@@ -1,0 +1,19 @@
+# ──────────────────────────────────────────────────────────────────────────
+#  DNS locale (split-horizon) — OPZIONALE
+#  Fa risolvere i tuoi sottodomini DuckDNS all'IP LOCALE del Pi quando sei in
+#  LAN, evitando di uscire su Internet e rientrare (hairpin NAT). Comodo per
+#  raggiungere i servizi via NPM/HTTPS anche da casa.
+#
+#  Per attivarlo sul Pi:
+#    1. cp 05-custom-dns.conf.example 05-custom-dns.conf
+#    2. sostituisci SUBDOMAIN col tuo subdomain DuckDNS e PI_IP con l'IP del Pi
+#    3. togli il '#' davanti alle righe address=
+#    4. sudo docker compose restart pihole
+#
+#  Nota: il file reale (05-custom-dns.conf) è gitignored perché contiene il tuo
+#  IP e il tuo subdomain — questo .example è solo un template.
+# ──────────────────────────────────────────────────────────────────────────
+#address=/pihole.SUBDOMAIN.duckdns.org/PI_IP
+#address=/home.SUBDOMAIN.duckdns.org/PI_IP
+#address=/kuma.SUBDOMAIN.duckdns.org/PI_IP
+#address=/netdata.SUBDOMAIN.duckdns.org/PI_IP
