@@ -25,7 +25,7 @@ apt-get install -y -qq curl git ca-certificates gnupg lsb-release
 if ! command -v docker &>/dev/null; then
     info "Installazione Docker..."
     curl -fsSL https://get.docker.com | sh
-    usermod -aG docker "$SUDO_USER"
+    [[ -n "$SUDO_USER" ]] && usermod -aG docker "$SUDO_USER"
     info "Docker installato. NOTA: riavvia la sessione per usare docker senza sudo."
 else
     info "Docker già installato — skip."
@@ -70,16 +70,21 @@ if [[ ! -f .env ]]; then
     read -rp "Premi INVIO quando hai modificato .env..." _
 fi
 
-# ── 6. Avvio stack ───────────────────────────────────────────
+# ── 7. Avvio stack ───────────────────────────────────────────
+# Pi-hole monta pihole/custom-hosts.txt come FILE su /etc/pihole/custom.list.
+# Il file è gitignored: in un clone pulito non esiste e Docker lo creerebbe
+# come cartella, rompendo custom.list. Garantiamo che esista come file.
+[[ -f pihole/custom-hosts.txt ]] || touch pihole/custom-hosts.txt
+
 info "Avvio dei container..."
 docker compose pull -q
 docker compose up -d
 
-# ── 7. Importazione liste di blocco ─────────────────────────
+# ── 8. Importazione liste di blocco ─────────────────────────
 info "Configurazione liste di blocco Pi-hole..."
 bash "$SCRIPT_DIR/scripts/setup-adlists.sh"
 
-# ── 8. Riepilogo ─────────────────────────────────────────────
+# ── 9. Riepilogo ─────────────────────────────────────────────
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║        Installazione completata!         ║${NC}"

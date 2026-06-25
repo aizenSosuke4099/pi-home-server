@@ -28,12 +28,16 @@ while IFS= read -r line; do
     # Ignora commenti e righe vuote
     [[ -z "$line" || "$line" =~ ^# ]] && continue
 
+    # Raddoppia gli apici singoli (' -> '') : escaping SQL corretto per SQLite
+    safe=${line//"'"/"''"}
+
     # Controlla se la lista è già presente
     if docker exec pihole sqlite3 /etc/pihole/gravity.db \
-        "SELECT COUNT(*) FROM adlist WHERE address='$line';" | grep -q "^0$"; then
+        "SELECT COUNT(*) FROM adlist WHERE address='$safe';" | grep -q "^0$"; then
         docker exec pihole sqlite3 /etc/pihole/gravity.db \
-            "INSERT INTO adlist (address, enabled) VALUES ('$line', 1);"
-        ((count++))
+            "INSERT INTO adlist (address, enabled) VALUES ('$safe', 1);"
+        # count=$((...)) torna sempre 0: robusto con set -e su ogni versione di bash
+        count=$((count + 1))
         info "  + $line"
     fi
 done < "$ADLISTS_FILE"

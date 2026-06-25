@@ -214,6 +214,8 @@ Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
 - Protocollo: `UDP`
 - Destinazione: IP del Pi
 
+> ⚠️ **Inoltra dall'esterno solo la `40959/UDP`** (e, solo se usi i certificati Let's Encrypt in HTTP-01, le `80`/`443/TCP`). **Non** esporre mai su Internet i pannelli admin: `81` (NPM), `3000` (Homepage), `3001` (Kuma), `19999` (Netdata). Restano raggiungibili dalla LAN o, da fuori, tramite la VPN WireGuard.
+
 ---
 
 ## Liste di blocco
