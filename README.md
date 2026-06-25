@@ -8,7 +8,7 @@ Unbound ──────→ risolve i DNS localmente, senza passare da Google/
 NPM ──────────→ reverse proxy HTTPS con certificato Let's Encrypt
 Homepage ─────→ dashboard unica con tutti i servizi
 Uptime Kuma ──→ monitora se i servizi sono online
-Watchtower ───→ aggiorna i container automaticamente ogni notte
+Auto-update ──→ aggiorna OS + Docker + container ogni domenica notte (systemd)
 Netdata ──────→ dashboard CPU/RAM/rete in tempo reale (opzionale)
 ```
 
@@ -124,7 +124,7 @@ Sostituisci `<IP-del-pi>` con l'indirizzo locale del tuo Raspberry (es. `192.168
 
 | Servizio | Cosa fa |
 |---|---|
-| **Watchtower** | Aggiorna tutti i container ogni notte alle 4:00 e pulisce le immagini vecchie |
+| **Auto-update** | Ogni domenica alle 4:00 aggiorna sistema operativo, engine Docker e container, e riavvia il Pi se serve (vedi [Aggiornamento](#aggiornamento)) |
 | **Pi-hole Gravity** | Aggiorna le liste di blocco automaticamente una volta alla settimana |
 
 Non serve fare nulla, girano da soli.
@@ -265,13 +265,34 @@ Per importarli: Pi-hole → Domains → aggiungi come **Exact allow**.
 
 ## Aggiornamento
 
-I container si aggiornano automaticamente grazie a **Watchtower** (ogni notte alle 4:00).
+Lo script `scripts/update.sh` aggiorna **tutto** in un colpo: pacchetti del sistema operativo, engine Docker (`docker-ce`) e immagini dei container. Fa anche un health-check finale e scrive il log in `/var/log/pi-home-update.log`.
 
-Per un aggiornamento manuale:
+### Aggiornamento manuale
 
 ```bash
 sudo bash scripts/update.sh
 ```
+
+Se un aggiornamento di kernel/firmware richiede un riavvio, te lo segnala (manualmente non riavvia da solo): `sudo reboot` quando vuoi.
+
+### Aggiornamento automatico settimanale
+
+Per farlo girare da solo ogni **domenica alle 4:00** (con riavvio automatico se serve — lo stack riparte da solo al boot):
+
+```bash
+sudo bash scripts/setup-autoupdate.sh
+```
+
+Installa un **systemd timer**. Comandi utili dopo l'installazione:
+
+```bash
+systemctl status pi-home-update.timer          # stato e prossima esecuzione
+sudo systemctl start pi-home-update.service     # lancia subito un aggiornamento
+journalctl -u pi-home-update.service -n 50      # log dell'ultimo run
+sudo systemctl disable --now pi-home-update.timer   # disattiva
+```
+
+> **Nota sul riavvio:** conviene impostare nel router un DNS secondario (es. il router stesso) oltre al Pi, così durante il breve riavvio notturno la rete non resta senza DNS.
 
 ---
 
@@ -354,7 +375,8 @@ pi-home-server/
 └── scripts/
     ├── install.sh           <- installazione completa (Docker + avvio stack)
     ├── setup-adlists.sh     <- importa le liste di blocco in Pi-hole
-    └── update.sh            <- aggiornamento container
+    ├── setup-autoupdate.sh  <- installa l'aggiornamento automatico settimanale
+    └── update.sh            <- aggiorna OS + Docker engine + container (con log)
 ```
 
 ---
@@ -373,5 +395,5 @@ Dispositivo -> Router -> Pi-hole -> Unbound -> Internet
 2. **Pi-hole** controlla se il dominio e' in una delle liste di blocco → se si, blocca
 3. Se non e' bloccato, passa la richiesta a **Unbound**
 4. **Unbound** risolve direttamente i DNS interrogando i root server, senza passare da Google o Cloudflare
-5. **Watchtower** aggiorna tutto automaticamente ogni notte
+5. L'**auto-update** settimanale tiene aggiornati OS, Docker e container
 6. **Homepage** mostra lo stato di tutti i servizi in una dashboard unica

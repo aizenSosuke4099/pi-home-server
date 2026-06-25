@@ -34,8 +34,6 @@ services:
         condition: service_healthy
     cap_add:
       - NET_ADMIN
-    labels:
-      - "com.centurylinklabs.watchtower.enable=false"   # no auto-update: evita breaking su major bump
 
   # ─── Unbound ───────────────────────────────────────────────────────────────
   unbound:
@@ -144,26 +142,9 @@ services:
     volumes:
       - ./npm/data:/data
       - ./npm/letsencrypt:/etc/letsencrypt
-    labels:
-      - "com.centurylinklabs.watchtower.enable=false"   # no auto-update: stabilità reverse proxy/HTTPS
     networks:
       dns_net:
         ipv4_address: 172.20.0.11
-
-  # ─── Watchtower (auto-update container) ───────────────────────────────────
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: watchtower
-    restart: unless-stopped
-    environment:
-      TZ: "Europe/Rome"
-      WATCHTOWER_CLEANUP: "true"
-      WATCHTOWER_SCHEDULE: "0 0 4 * * *"   # ogni notte alle 4:00
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      dns_net:
-        ipv4_address: 172.20.0.10
 
   # ─── Netdata (opzionale) ───────────────────────────────────────────────────
   netdata:
