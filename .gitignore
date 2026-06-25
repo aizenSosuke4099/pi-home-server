@@ -25,6 +25,9 @@ homepage/config/proxmox.yaml
 homepage/config/custom.css
 homepage/config/custom.js
 
+# Backup (contengono .env e dati sensibili!) — mai su una repo pubblica
+backups/
+
 # OS
 .DS_Store
 Thumbs.db

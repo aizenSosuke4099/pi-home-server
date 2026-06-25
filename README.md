@@ -139,6 +139,8 @@ Entra nel pannello del router → cerca "DNS primario" nella sezione DHCP → in
 
 In questo modo **tutti i dispositivi della rete** (TV, telefoni, PC) useranno automaticamente Pi-hole senza configurare nulla sui singoli dispositivi.
 
+> ⚠️ **Attenzione all'IPv6:** questo stack lavora in IPv4. Se il router distribuisce anche un **DNS IPv6**, i dispositivi possono aggirare Pi-hole via IPv6 e gli ads ripassano. Nel pannello del router: disabilita il DNS IPv6 (o l'IPv6 del tutto se non ti serve), oppure imposta come DNS IPv6 un indirizzo non risolvente.
+
 ### 2. Configura Homepage
 
 Homepage si apre su `http://<IP-del-pi>:3000`. Dopo il primo avvio, sostituisci l'IP placeholder nei link:
@@ -304,6 +306,66 @@ sudo bash scripts/setup-log-rotation.sh
 
 Il merge è non distruttivo (mantiene eventuali altre impostazioni del demone) e ricrea i container per applicarla.
 
+> **Limiti di RAM:** lo stack mette un tetto di RAM su Netdata e Uptime Kuma per proteggere il Pi da 2GB da un container impazzito. Perché venga davvero applicato, su Raspberry Pi OS può servire abilitare il cgroup memory: aggiungi `cgroup_enable=memory cgroup_memory=1` in fondo (stessa riga) a `/boot/firmware/cmdline.txt` (o `/boot/cmdline.txt` sui sistemi più vecchi) e riavvia.
+
+---
+
+## Backup e ripristino
+
+I dati critici (config NPM, **chiavi WireGuard**, impostazioni Pi-hole, certificati) vivono su SD card: un guasto = tutto perso. Lo script `backup.sh` salva tutti i bind-mount + `.env` in un archivio `tar.gz` datato, con rotazione.
+
+### Backup manuale
+
+```bash
+sudo bash scripts/backup.sh
+```
+
+Configura nel `.env` destinazione e ritenzione — la destinazione dovrebbe stare su una **USB o un NAS**, non sulla SD stessa (altrimenti non protegge da un guasto della scheda):
+
+```
+BACKUP_DEST=/mnt/usb/pi-home-backup
+BACKUP_KEEP=7
+```
+
+### Backup automatico giornaliero
+
+```bash
+sudo bash scripts/setup-backup.sh
+```
+
+Installa un systemd timer (ogni giorno alle 03:00, un'ora prima dell'update settimanale → hai sempre un restore point fresco prima degli aggiornamenti).
+
+### Ripristino
+
+```bash
+sudo docker compose down                                      # 1. ferma lo stack
+sudo tar -xzf /percorso/pi-home-backup-AAAAMMGG-HHMMSS.tar.gz -C ~/pi-home-server   # 2. estrai
+sudo docker compose up -d                                     # 3. riavvia
+```
+
+---
+
+## Notifiche
+
+Per essere avvisato quando un **aggiornamento o un backup fallisce**, imposta un topic [ntfy.sh](https://ntfy.sh) nel `.env` e iscriviti dall'app (nessun account richiesto):
+
+```
+NTFY_TOPIC=pi-home-un-nome-difficile-da-indovinare
+```
+
+Lascialo vuoto per disattivare le notifiche.
+
+---
+
+## Usura della SD card
+
+Pi-hole scrive il query log di continuo: per allungare la vita della SD, `log2ram` tiene `/var/log` in RAM e lo scrive su scheda solo periodicamente.
+
+```bash
+sudo bash scripts/setup-log2ram.sh
+sudo reboot
+```
+
 ---
 
 ## Troubleshooting
@@ -386,7 +448,11 @@ pi-home-server/
     ├── install.sh           <- installazione completa (Docker + avvio stack)
     ├── setup-adlists.sh     <- importa le liste di blocco in Pi-hole
     ├── setup-autoupdate.sh  <- installa l'aggiornamento automatico settimanale
+    ├── setup-backup.sh      <- installa il backup automatico giornaliero
     ├── setup-log-rotation.sh<- limita i log dei container (10MB x3 ciascuno)
+    ├── setup-log2ram.sh     <- riduce l'usura della SD (log in RAM)
+    ├── backup.sh            <- backup dei dati persistenti (tar.gz, con rotazione)
+    ├── notify.sh            <- notifiche via ntfy (usato da update/backup)
     └── update.sh            <- aggiorna OS + Docker engine + container (con log)
 ```
 

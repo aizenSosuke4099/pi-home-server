@@ -49,7 +49,7 @@ systemctl restart docker
 for _ in $(seq 1 30); do docker info &>/dev/null && break; sleep 1; done
 
 # Applica la rotazione anche ai container già esistenti, ricreandoli
-cd "$REPO_DIR"
+cd "$REPO_DIR" || { echo "cartella repo non raggiungibile: $REPO_DIR"; exit 1; }
 if docker compose ps -q 2>/dev/null | grep -q .; then
     echo "Ricreo i container per applicare la rotazione ai log..."
     if docker ps --format '{{.Names}}' | grep -qx netdata; then

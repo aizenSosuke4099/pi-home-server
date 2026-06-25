@@ -46,7 +46,7 @@ apt-get clean
 
 # ── 2. Container dello stack ─────────────────────────────────
 echo "[2/5] Aggiornamento container Docker..."
-cd "$REPO_DIR"
+cd "$REPO_DIR" || { echo "cartella repo non raggiungibile: $REPO_DIR"; exit 1; }
 docker compose pull
 docker compose up -d
 
@@ -80,6 +80,8 @@ else
 fi
 if [[ $fail -ne 0 ]]; then
     echo "  >>> ATTENZIONE: health-check fallito! Controlla: docker compose logs"
+    bash "$REPO_DIR/scripts/notify.sh" "⚠️ Pi Home: update con problemi" \
+        "Health-check fallito dopo l'aggiornamento del $(date '+%d/%m %H:%M'). Controlla: journalctl -u pi-home-update" high
 fi
 
 # ── 5. Riavvio se richiesto da kernel/firmware ───────────────
@@ -88,6 +90,8 @@ if [[ -f /var/run/reboot-required ]]; then
     if [[ $REBOOT_IF_REQUIRED -eq 1 ]]; then
         echo "  Aggiornamento kernel/firmware: riavvio ora (lo stack riparte da solo)."
         echo "[FINE] $(date '+%H:%M:%S') — reboot in corso"
+        bash "$REPO_DIR/scripts/notify.sh" "Pi Home: riavvio post-update" \
+            "Aggiornato kernel/firmware, riavvio in corso. Lo stack riparte da solo." default
         /sbin/reboot
         exit 0
     else

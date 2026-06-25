@@ -70,6 +70,14 @@ if [[ ! -f .env ]]; then
     read -rp "Premi INVIO quando hai modificato .env..." _
 fi
 
+# Validazione minima del .env
+if ! grep -qE '^PIHOLE_PASSWORD=.+' .env || grep -qE '^PIHOLE_PASSWORD=cambia_questa_password$' .env; then
+    error "PIHOLE_PASSWORD non impostata nel .env (è ancora il valore di default)."
+fi
+if ! grep -qE '^PI_IP=.+' .env || grep -qE '^PI_IP=192\.168\.1\.X$' .env; then
+    warn "PI_IP non sembra valorizzato nel .env — controlla prima di proseguire."
+fi
+
 # ── 7. Avvio stack ───────────────────────────────────────────
 # Rotazione log dei container (10MB x3) prima di crearli: nascono già limitati
 info "Configurazione rotazione log Docker..."
