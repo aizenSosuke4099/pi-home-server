@@ -18,6 +18,13 @@ wireguard/config/
 npm/data/
 npm/letsencrypt/
 
+# Homepage — file locali/runtime e config con possibili API token (repo PUBBLICA!)
+homepage/config/logs/
+homepage/config/kubernetes.yaml
+homepage/config/proxmox.yaml
+homepage/config/custom.css
+homepage/config/custom.js
+
 # OS
 .DS_Store
 Thumbs.db
