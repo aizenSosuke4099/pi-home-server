@@ -71,6 +71,10 @@ if [[ ! -f .env ]]; then
 fi
 
 # ── 7. Avvio stack ───────────────────────────────────────────
+# Rotazione log dei container (10MB x3) prima di crearli: nascono già limitati
+info "Configurazione rotazione log Docker..."
+bash "$SCRIPT_DIR/scripts/setup-log-rotation.sh"
+
 # Pi-hole monta pihole/custom-hosts.txt come FILE su /etc/pihole/custom.list.
 # Il file è gitignored: in un clone pulito non esiste e Docker lo creerebbe
 # come cartella, rompendo custom.list. Garantiamo che esista come file.

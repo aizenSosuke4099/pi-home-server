@@ -294,6 +294,16 @@ sudo systemctl disable --now pi-home-update.timer   # disattiva
 
 > **Nota sul riavvio:** conviene impostare nel router un DNS secondario (es. il router stesso) oltre al Pi, così durante il breve riavvio notturno la rete non resta senza DNS.
 
+### Rotazione dei log dei container
+
+Per evitare che i log dei container crescano all'infinito, `install.sh` configura la rotazione in `/etc/docker/daemon.json` (max 10MB x3 file per container). Su un'installazione già esistente la attivi con:
+
+```bash
+sudo bash scripts/setup-log-rotation.sh
+```
+
+Il merge è non distruttivo (mantiene eventuali altre impostazioni del demone) e ricrea i container per applicarla.
+
 ---
 
 ## Troubleshooting
@@ -376,6 +386,7 @@ pi-home-server/
     ├── install.sh           <- installazione completa (Docker + avvio stack)
     ├── setup-adlists.sh     <- importa le liste di blocco in Pi-hole
     ├── setup-autoupdate.sh  <- installa l'aggiornamento automatico settimanale
+    ├── setup-log-rotation.sh<- limita i log dei container (10MB x3 ciascuno)
     └── update.sh            <- aggiorna OS + Docker engine + container (con log)
 ```
 
