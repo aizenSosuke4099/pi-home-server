@@ -45,14 +45,21 @@ apt-get -y autoremove --purge
 apt-get clean
 
 # ── 2. Container dello stack ─────────────────────────────────
-echo "[2/4] Aggiornamento container Docker..."
+echo "[2/5] Aggiornamento container Docker..."
 cd "$REPO_DIR"
 docker compose pull
 docker compose up -d
-docker image prune -f
 
-# ── 3. Health-check ──────────────────────────────────────────
-echo "[3/4] Verifica servizi..."
+# ── 3. Pulizia file obsoleti ─────────────────────────────────
+echo "[3/5] Pulizia file obsoleti..."
+# Docker: immagini vecchie/dangling, container fermi, build cache, reti inutilizzate
+# (NON tocca i volumi: i dati dello stack sono su bind-mount, restano intatti)
+docker system prune -f
+# Log di systemd: tieni solo gli ultimi 30 giorni
+journalctl --vacuum-time=30d 2>/dev/null || true
+
+# ── 4. Health-check ──────────────────────────────────────────
+echo "[4/5] Verifica servizi..."
 sleep 10
 fail=0
 for c in pihole unbound npm; do
@@ -75,8 +82,8 @@ if [[ $fail -ne 0 ]]; then
     echo "  >>> ATTENZIONE: health-check fallito! Controlla: docker compose logs"
 fi
 
-# ── 4. Riavvio se richiesto da kernel/firmware ───────────────
-echo "[4/4] Controllo riavvio..."
+# ── 5. Riavvio se richiesto da kernel/firmware ───────────────
+echo "[5/5] Controllo riavvio..."
 if [[ -f /var/run/reboot-required ]]; then
     if [[ $REBOOT_IF_REQUIRED -eq 1 ]]; then
         echo "  Aggiornamento kernel/firmware: riavvio ora (lo stack riparte da solo)."
