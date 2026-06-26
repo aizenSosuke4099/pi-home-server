@@ -3,9 +3,15 @@ theme: dark
 color: slate
 headerStyle: clean
 layout:
-  Rete:
+  Rete e DNS:
     style: row
     columns: 2
-  Monitoraggio:
+  VPN e dominio:
     style: row
     columns: 3
+  Monitoraggio:
+    style: row
+    columns: 2
+  Collegamenti rapidi:
+    style: row
+    columns: 4

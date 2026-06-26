@@ -143,14 +143,9 @@ In questo modo **tutti i dispositivi della rete** (TV, telefoni, PC) useranno au
 
 ### 2. Configura Homepage
 
-Homepage si apre su `http://<IP-del-pi>:3000`. Dopo il primo avvio, sostituisci l'IP placeholder nei link:
+Homepage si apre su `http://<IP-del-pi>:3000`. **Non serve modificare nulla a mano**: IP e sottodominio nei link vengono presi dal `.env` tramite le variabili `HOMEPAGE_VAR_PI_IP` e `HOMEPAGE_VAR_DUCKDNS`. I widget di Pi-hole, Uptime Kuma e Netdata funzionano da soli.
 
-```bash
-cd ~/pi-home-server
-sed -i "s/PI_IP_ADDRESS/$(hostname -I | awk '{print $1}')/g" homepage/config/services.yaml
-```
-
-I widget di Pi-hole e Netdata funzionano automaticamente. La password di Pi-hole viene letta dal `.env`.
+> Il meteo in `homepage/config/widgets.yaml` punta a Villafranca di Verona — cambia `latitude`/`longitude` con le tue coordinate. Il link "Router" nei bookmark è `192.168.1.1`: correggilo se il tuo gateway è diverso.
 
 ### 3. Configura Uptime Kuma
 

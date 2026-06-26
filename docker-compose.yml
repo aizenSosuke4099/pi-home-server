@@ -124,6 +124,8 @@ services:
     environment:
       HOMEPAGE_ALLOWED_HOSTS: "${PI_IP}:3000,localhost:3000,home.${DUCKDNS_SUBDOMAIN}.duckdns.org"
       HOMEPAGE_VAR_PIHOLE_KEY: "${PIHOLE_PASSWORD}"
+      HOMEPAGE_VAR_PI_IP: "${PI_IP}"               # usato nei link di homepage (niente più sed)
+      HOMEPAGE_VAR_DUCKDNS: "${DUCKDNS_SUBDOMAIN}"  # sottodominio per i link HTTPS via NPM
     volumes:
       - ./homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro

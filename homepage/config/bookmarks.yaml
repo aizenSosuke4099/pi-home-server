@@ -1,1 +1,13 @@
-[]
+- Collegamenti rapidi:
+    - Router:
+        - abbr: RT
+          href: http://192.168.1.1
+    - NPM admin:
+        - abbr: PM
+          href: http://{{HOMEPAGE_VAR_PI_IP}}:81
+    - Pi-hole:
+        - abbr: PH
+          href: https://pihole.{{HOMEPAGE_VAR_DUCKDNS}}.duckdns.org
+    - Repo GitHub:
+        - abbr: GH
+          href: https://github.com/aizenSosuke4099/pi-home-server

@@ -1,6 +1,6 @@
-- Rete:
+- Rete e DNS:
     - Pi-hole:
-        href: http://PI_IP_ADDRESS/admin
+        href: https://pihole.{{HOMEPAGE_VAR_DUCKDNS}}.duckdns.org
         description: Blocco ads e DNS
         icon: pi-hole
         widget:
@@ -12,12 +12,25 @@
     - Unbound:
         href: "#"
         description: DNS resolver privato
-        icon: dns
+        icon: mdi-dns
         server: my-docker
         container: unbound
 
+- VPN e dominio:
+    - WireGuard:
+        description: VPN WireGuard
+        icon: wireguard
+        server: my-docker
+        container: wireguard
+
+    - DuckDNS:
+        description: IP pubblico dinamico
+        icon: duckdns
+        server: my-docker
+        container: duckdns
+
     - Nginx Proxy Manager:
-        href: http://PI_IP_ADDRESS:81
+        href: http://{{HOMEPAGE_VAR_PI_IP}}:81
         description: Reverse proxy HTTPS
         icon: nginx-proxy-manager
         server: my-docker
@@ -25,7 +38,7 @@
 
 - Monitoraggio:
     - Uptime Kuma:
-        href: http://PI_IP_ADDRESS:3001
+        href: https://kuma.{{HOMEPAGE_VAR_DUCKDNS}}.duckdns.org
         description: Stato dei servizi
         icon: uptime-kuma
         widget:
@@ -34,7 +47,7 @@
           slug: default
 
     - Netdata:
-        href: http://PI_IP_ADDRESS:19999
+        href: https://netdata.{{HOMEPAGE_VAR_DUCKDNS}}.duckdns.org
         description: CPU, RAM, temperatura
         icon: netdata
         widget:

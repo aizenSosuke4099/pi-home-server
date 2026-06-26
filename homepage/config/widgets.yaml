@@ -1,9 +1,6 @@
-- resources:
-    cpu: true
-    cputemp: true
-    memory: true
-    disk: /
-    uptime: true
+- greeting:
+    text_size: xl
+    text: Ciao Lorenzo
 
 - datetime:
     text_size: xl
@@ -11,3 +8,22 @@
       dateStyle: long
       timeStyle: short
       hour12: false
+
+- openmeteo:
+    label: Villafranca
+    latitude: 45.3536
+    longitude: 10.8442
+    units: metric
+    cache: 5
+
+- resources:
+    label: Sistema
+    cpu: true
+    cputemp: true
+    memory: true
+    disk: /
+    uptime: true
+
+- search:
+    provider: duckduckgo
+    target: _blank
