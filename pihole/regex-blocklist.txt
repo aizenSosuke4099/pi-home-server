@@ -5,6 +5,7 @@
 # ── Analytics generici ───────────────────────────────────────
 (\.|^)app-measurement\.com$
 (\.|^)app-analytics-services\.com$
+(\.|^)firebaselogging-pa\.googleapis\.com$
 (\.|^)cdn\.adscale\.com$
 (\.|^)idb\.iubenda\.com$
 (\.|^)api\.snapkit\.com$
@@ -31,6 +32,7 @@
 
 # ── Microsoft ────────────────────────────────────────────────
 (\.|^)dcg\.microsoft\.com$
+(\.|^)in\.appcenter\.ms$
 
 # ── App / servizi vari ───────────────────────────────────────
 (\.|^)ab\.chatgpt\.com$
