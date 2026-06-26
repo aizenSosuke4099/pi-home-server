@@ -1,20 +1,30 @@
-# Domini in allowlist — necessari per il funzionamento di servizi
-# Importare in Pi-hole → Domains → Exact allow
+# Pi Home Server — domini in allow (exact) per Pi-hole
+# Sbloccano servizi che altrimenti si romperebbero.
+# Importati da scripts/setup-adlists.sh (domainlist type 0).
 
-# ── Facebook / Instagram ─────────────────────────────────────
+# ── Social / messaggistica ───────────────────────────────────
 graph.facebook.com
+web.facebook.com
 gateway.instagram.com
 graph.instagram.com
-
-# ── WhatsApp ─────────────────────────────────────────────────
 dit.whatsapp.net
 graph.whatsapp.com
 
-# ── Fire TV ──────────────────────────────────────────────────
+# ── Apple / Firebase ─────────────────────────────────────────
+xp.apple.com
+firebaseinstallations.googleapis.com
+
+# ── Fire TV (apex permesso; i sottodomini restano bloccati dalla regex) ──
 firetvcaptiveportal.com
 
-# ── Apple ────────────────────────────────────────────────────
-xp.apple.com
+# ── Software / utility PC ────────────────────────────────────
+update.iobit.com
+download.iobit.com
+bitdefenders.iobit.com
+spyhunter.enigmasoftware.com
+installer.enigmasoftware.com
+logagent-wf.centurygame.com
 
-# ── Firebase ─────────────────────────────────────────────────
-firebaseinstallations.googleapis.com
+# ── DoH (NOTA: permette a Chrome il DoH Cloudflare → valuta se rimuoverlo,
+#     dato che hai la lista doh.txt che li blocca) ─────────────
+chrome.cloudflare-dns.com

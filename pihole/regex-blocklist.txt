@@ -1,33 +1,43 @@
-# Regex deny — domini bloccati manualmente
-# Importare in Pi-hole → Domains → Regex deny
+# Pi Home Server — regex deny per Pi-hole
+# Telemetria/tracking specifici che le liste si perdono.
+# Importati da scripts/setup-adlists.sh (domainlist type 3).
 
-# ── Tracking e telemetria ────────────────────────────────
-(\.|^)raitvpiu[0-9]*\.servicebus\.windows\.net$
-(\.|^)rebuyengine\.com$
-(\.|^)geo\.rebuyengine\.com$
-(\.|^)idb\.iubenda\.com$
-(\.|^)cdn\.adscale\.com$
-(\.|^)6af2cd3d-2ef8-45e2-8eb3-2cace471115c-netseer-ipaddr-assoc\.xz\.fbcdn\.net$
-(\.|^)api\.snapkit\.com$
-(\.|^)dcg\.microsoft\.com$
-(\.|^)ab\.chatgpt\.com$
-(\.|^)browser-intake-us5-datadoghq\.com$
-(\.|^)api3\.siftscience\.com$
-(\.|^)statsig\.anthropic\.com$
+# ── Analytics generici ───────────────────────────────────────
 (\.|^)app-measurement\.com$
 (\.|^)app-analytics-services\.com$
-(\.|^)firebaselogging-pa\.googleapis\.com$
-(\.|^)in\.appcenter\.ms$
+(\.|^)cdn\.adscale\.com$
+(\.|^)idb\.iubenda\.com$
+(\.|^)api\.snapkit\.com$
+(\.|^)api3\.siftscience\.com$
+(\.|^)browser-intake-us5-datadoghq\.com$
+(\.|^)geo\.rebuyengine\.com$
+(\.|^)6af2cd3d-2ef8-45e2-8eb3-2cace471115c-netseer-ipaddr-assoc\.xz\.fbcdn\.net$
 
-# ── Fire TV telemetria ───────────────────────────────────
-(\.|^)msh\.amazon\.co\.uk$
-(\.|^)msh\.amazon\.com$
-(\.|^)ktpx-eu-south-2\.amazon\.com$
+# ── Amazon / AWS ─────────────────────────────────────────────
+(\.|^)device-metrics-us\.amazon\.com$
+(\.|^)device-metrics-us-2\.amazon\.com$
+(\.|^)mobileanalytics\.us-east-1\.amazonaws\.com$
 (\.|^)arcus-uswest\.amazon\.com$
-(\.|^)global\.telemetry\.insights\.video\.a2z\.com$
-(\.|^)digprjsurvey\.amazon\.co\.uk$
 (\.|^)dcape-na\.amazon\.com$
+(\.|^)ktpx-eu-south-2\.amazon\.com$
+(\.|^)msh\.amazon\.com$
+(\.|^)msh\.amazon\.co\.uk$
+(\.|^)digprjsurvey\.amazon\.co\.uk$
 (\.|^)eu\.prism\.digital\.amazon\.dev$
+(\.|^)global\.telemetry\.insights\.video\.a2z\.com$
 
-# ── IoT telemetria ───────────────────────────────────────
+# ── Fire TV (sottodomini; l'apex è in allowlist) ─────────────
+(\.|^)firetvcaptiveportal\.com$
+
+# ── Microsoft ────────────────────────────────────────────────
+(\.|^)dcg\.microsoft\.com$
+
+# ── App / servizi vari ───────────────────────────────────────
+(\.|^)ab\.chatgpt\.com$
+(\.|^)statsig\.anthropic\.com$
+
+# ── RaiPlay telemetria (Azure Service Bus — NON tocca lista canali/video) ──
+(\.|^)raitvpiu[0-9]*\.servicebus\.windows\.net$
+
+# ── IoT ──────────────────────────────────────────────────────
 (\.|^)ntp\.vesync\.com$

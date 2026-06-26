@@ -57,7 +57,7 @@ Lo script fa tutto in automatico:
 2. Installa Docker e Docker Compose
 3. Chiede di compilare il file `.env` con le tue impostazioni
 4. Scarica le immagini Docker e avvia i container
-5. Importa 51 liste di blocco in Pi-hole
+5. Importa liste, allowlist e regex deny in Pi-hole
 
 ---
 
@@ -222,23 +222,23 @@ Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
 
 ## Liste di blocco
 
-Lo script `install.sh` importa automaticamente **51 liste** da `pihole/adlists.txt`, coprendo:
+Lo script `setup-adlists.sh` importa **~30 liste** da `pihole/adlists.txt`. La scelta è volutamente **snella**: Hagezi Ultimate copre già ads+tracking di decine di liste, quindi qui restano solo quelle che Ultimate *non* include:
 
 | Categoria | Fonti |
 |---|---|
-| Ads | Hagezi Pro/Multi, AdGuard, Easylist, AdAway, Admiral, anudeepND, yoyo |
-| Tracking | Easyprivacy, Firebog Prigent, frogeye first/multiparty, BlocklistProject |
-| Smart TV / Android | Perflyst SmartTV, Android tracking, Amazon Fire TV |
-| Telemetria per brand | Samsung, Apple, Amazon, Huawei, Xiaomi, LG webOS, Windows/Office, TikTok |
-| Malware / phishing | Hagezi TIF, DandelionSprout, phishing.army, Firebog RPiList, abuse.ch, stalkerware |
-| Spam / scam / fraud | Spam404, durablenapkin, jarelllama, BlocklistProject fraud/scam |
-| DNS bypass / crypto | Hagezi DoH, DoH-VPN-proxy-bypass |
-| Ransomware | BlocklistProject Ransomware |
-| Catch-all | Hagezi Ultimate |
+| Ads + tracking (catch-all) | Hagezi Ultimate |
+| Malware / phishing | Hagezi TIF, DandelionSprout, malware-filter, phishing.army, abuse.ch, Firebog RPiList/Prigent |
+| Ransomware / crypto / stalkerware | BlocklistProject, Firebog Prigent-Crypto, AssoEchap |
+| Scam / fraud / spam | Spam404, durablenapkin, jarelllama, BlocklistProject fraud/scam |
+| Telemetria per brand | Hagezi native (Amazon, Apple, Samsung, Huawei, Xiaomi, LG webOS, Win/Office, TikTok) + WindowsSpyBlocker |
+| Smart TV / Android / Fire TV | Perflyst SmartTV, Android tracking, Amazon Fire TV |
+| DNS bypass (DoH) | Hagezi DoH |
 
-Con tutte le liste attive si superano i **3M+ domini bloccati**. Le liste si aggiornano automaticamente una volta alla settimana.
+Si superano comunque i **4M+ domini bloccati**, e le liste si aggiornano da sole una volta alla settimana.
 
-Per aggiungere o rimuovere liste, modifica `pihole/adlists.txt` e riesegui:
+> **Perché ~30 e non 51?** Impilare più tier Hagezi (multi+pro+ultimate) o decine di liste-ads sovrapposte **non** aumenta il blocco — Ultimate le contiene già — ma appesantisce la gravity sul Pi 2GB e moltiplica i falsi positivi. Meno ridondanza = stesso blocco reale, Pi più leggero.
+
+Lo stesso script importa anche `pihole/allowlist.txt` (allow esatti) e `pihole/regex-blocklist.txt` (regex deny). Per aggiungere/rimuovere una regola, modifica il file corrispondente e riesegui:
 
 ```bash
 sudo bash scripts/setup-adlists.sh
@@ -248,20 +248,9 @@ sudo bash scripts/setup-adlists.sh
 
 ### Allowlist
 
-Alcuni domini sono necessari per il funzionamento di servizi e vanno sbloccati. La lista è in `pihole/allowlist.txt`:
+Alcuni domini vanno sbloccati perché necessari ai servizi: sono in `pihole/allowlist.txt` (allow esatti) e li importa automaticamente `setup-adlists.sh`. Tra questi: `graph.facebook.com`, `dit.whatsapp.net`, `firetvcaptiveportal.com`, `xp.apple.com`, `firebaseinstallations.googleapis.com`.
 
-| Dominio | Motivo |
-|---|---|
-| `graph.facebook.com` | Commenti Facebook |
-| `gateway.instagram.com` | Feed Instagram |
-| `graph.instagram.com` | API Instagram |
-| `dit.whatsapp.net` | WhatsApp (evita retry continui) |
-| `graph.whatsapp.com` | WhatsApp funzionalità |
-| `firetvcaptiveportal.com` | Connessione Fire TV |
-| `xp.apple.com` | App Store, notifiche iOS |
-| `firebaseinstallations.googleapis.com` | App che usano Firebase |
-
-Per importarli: Pi-hole → Domains → aggiungi come **Exact allow**.
+Le regex di telemetria che le liste non coprono sono in `pihole/regex-blocklist.txt` (importate come Regex deny).
 
 ---
 
@@ -429,7 +418,7 @@ pi-home-server/
 │   └── unbound.conf         <- configurazione DNS resolver locale
 |
 ├── pihole/
-│   ├── adlists.txt          <- 51 liste di blocco pre-configurate
+│   ├── adlists.txt          <- ~30 liste di blocco pre-configurate
 │   ├── regex-blocklist.txt  <- regex deny per telemetria e tracking
 │   ├── allowlist.txt        <- domini sbloccati (Facebook, Fire TV)
 │   └── etc-pihole/          <- dati Pi-hole (generati al primo avvio, gitignored)
@@ -446,7 +435,7 @@ pi-home-server/
 |
 └── scripts/
     ├── install.sh           <- installazione completa (Docker + avvio stack)
-    ├── setup-adlists.sh     <- importa le liste di blocco in Pi-hole
+    ├── setup-adlists.sh     <- importa liste + allowlist + regex in Pi-hole
     ├── setup-autoupdate.sh  <- installa l'aggiornamento automatico settimanale
     ├── setup-backup.sh      <- installa il backup automatico giornaliero
     ├── setup-log-rotation.sh<- limita i log dei container (10MB x3 ciascuno)
