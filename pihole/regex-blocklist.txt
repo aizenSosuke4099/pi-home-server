@@ -6,6 +6,8 @@
 (\.|^)app-measurement\.com$
 (\.|^)app-analytics-services\.com$
 (\.|^)firebaselogging-pa\.googleapis\.com$
+(\.|^)optimizationguide-pa\.googleapis\.com$
+(\.|^)tunnel\.googlezip\.net$
 (\.|^)cdn\.adscale\.com$
 (\.|^)idb\.iubenda\.com$
 (\.|^)api\.snapkit\.com$
@@ -33,6 +35,8 @@
 # ── Microsoft ────────────────────────────────────────────────
 (\.|^)dcg\.microsoft\.com$
 (\.|^)in\.appcenter\.ms$
+(\.|^)dsp\.mp\.microsoft\.com$
+(\.|^)config\.edge\.skype\.com$
 
 # ── App / servizi vari ───────────────────────────────────────
 (\.|^)ab\.chatgpt\.com$
@@ -41,5 +45,6 @@
 # ── RaiPlay telemetria (Azure Service Bus — NON tocca lista canali/video) ──
 (\.|^)raitvpiu[0-9]*\.servicebus\.windows\.net$
 
-# ── IoT ──────────────────────────────────────────────────────
+# ── IoT / stampanti ──────────────────────────────────────────
 (\.|^)ntp\.vesync\.com$
+(\.|^)avatar\.ext\.hp\.com$
