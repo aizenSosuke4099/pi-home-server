@@ -1,13 +1,21 @@
-- Collegamenti rapidi:
-    - Router:
-        - abbr: RT
-          href: http://192.168.1.1
-    - NPM admin:
-        - abbr: PM
-          href: http://{{HOMEPAGE_VAR_PI_IP}}:81
+- Pannelli:
     - Pi-hole:
         - abbr: PH
           href: https://pihole.{{HOMEPAGE_VAR_DUCKDNS}}.duckdns.org
+    - NPM admin:
+        - abbr: PM
+          href: http://{{HOMEPAGE_VAR_PI_IP}}:81
+    - Uptime Kuma:
+        - abbr: UK
+          href: https://kuma.{{HOMEPAGE_VAR_DUCKDNS}}.duckdns.org
+    - Netdata:
+        - abbr: ND
+          href: https://netdata.{{HOMEPAGE_VAR_DUCKDNS}}.duckdns.org
+
+- Sistema:
+    - Router:
+        - abbr: RT
+          href: http://192.168.1.1
     - Repo GitHub:
         - abbr: GH
           href: https://github.com/aizenSosuke4099/pi-home-server

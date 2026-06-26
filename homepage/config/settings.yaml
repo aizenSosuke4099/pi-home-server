@@ -12,6 +12,9 @@ layout:
   Monitoraggio:
     style: row
     columns: 2
-  Collegamenti rapidi:
+  Pannelli:
     style: row
     columns: 4
+  Sistema:
+    style: row
+    columns: 2
