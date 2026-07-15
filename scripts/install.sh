@@ -109,3 +109,8 @@ echo "  Netdata:        http://$(hostname -I | awk '{print $1}'):19999  (se atti
 echo "  WireGuard QR:   sudo docker exec wireguard /app/show-peer <nome>"
 echo ""
 info "Imposta il DNS del router su: $(hostname -I | awk '{print $1}')"
+echo ""
+info "Opzionali consigliati (vedi README):"
+echo "  Auto-update settimanale:   sudo bash scripts/setup-autoupdate.sh"
+echo "  Backup giornaliero:        sudo bash scripts/setup-backup.sh"
+echo "  Meno usura SD (log2ram):   sudo bash scripts/setup-log2ram.sh"

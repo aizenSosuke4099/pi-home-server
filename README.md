@@ -56,8 +56,9 @@ Lo script fa tutto in automatico:
 1. Aggiorna il sistema operativo
 2. Installa Docker e Docker Compose
 3. Chiede di compilare il file `.env` con le tue impostazioni
-4. Scarica le immagini Docker e avvia i container
-5. Importa liste, allowlist e regex deny in Pi-hole
+4. Configura la rotazione dei log dei container
+5. Scarica le immagini Docker e avvia i container
+6. Importa liste, allowlist e regex deny in Pi-hole
 
 ---
 
@@ -326,6 +327,8 @@ sudo docker compose down                                      # 1. ferma lo stac
 sudo tar -xzf /percorso/pi-home-backup-AAAAMMGG-HHMMSS.tar.gz -C ~/pi-home-server   # 2. estrai
 sudo docker compose up -d                                     # 3. riavvia
 ```
+
+> Il backup **esclude** i database rigenerabili di Pi-hole (`gravity.db`, lo storico query FTL): sono grossi e si ricreano da soli. Dopo un ripristino, Pi-hole riscarica le liste al primo gravity update — o subito con `sudo docker exec pihole pihole -g`. Il blocco DNS torna identico (liste, allow e regex sono nel backup e nella repo).
 
 ---
 

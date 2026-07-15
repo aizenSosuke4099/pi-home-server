@@ -37,6 +37,11 @@ mkdir -p "$BACKUP_DEST"
 if [[ "$(stat -c %d "$BACKUP_DEST" 2>/dev/null)" == "$(stat -c %d "$REPO_DIR" 2>/dev/null)" ]]; then
     echo "  [WARN] BACKUP_DEST è sullo stesso disco del Pi: NON protegge da un guasto della SD."
     echo "         Imposta BACKUP_DEST nel .env su una USB o un NAS."
+    # Se BACKUP_DEST era configurato esplicitamente, probabilmente la USB è smontata → avvisa
+    if [[ -n "$(get_env BACKUP_DEST)" ]]; then
+        bash "$REPO_DIR/scripts/notify.sh" "⚠️ Pi Home: backup sulla SD" \
+            "BACKUP_DEST ($BACKUP_DEST) risulta sullo stesso disco della SD — USB smontata? Questo backup non protegge da un guasto della scheda." high
+    fi
 fi
 
 cd "$REPO_DIR" || { echo "  [FAIL] cartella repo non raggiungibile: $REPO_DIR"; exit 1; }
@@ -58,7 +63,19 @@ TS="$(date +%Y%m%d-%H%M%S)"
 ARCHIVE="$BACKUP_DEST/pi-home-backup-$TS.tar.gz"
 echo "  Creo l'archivio: $ARCHIVE"
 
-if tar -czf "$ARCHIVE" "${existing[@]}" && tar -tzf "$ARCHIVE" >/dev/null 2>&1; then
+# Esclusi i DB rigenerabili/voluminosi di Pi-hole: gravity.db si ricrea con
+# `pihole -g` (le liste sono in pihole/adlists.txt), FTL.db è solo lo storico
+# query, macvendor.db è statico. Il blocco DNS non c'entra: nessun dominio perso.
+# GNU tar esce con 1 se un file cambia durante la lettura (normale coi DB vivi):
+# non è un errore fatale (quello è exit 2), quindi accettiamo rc <= 1.
+tar --warning=no-file-changed \
+    --exclude='pihole/etc-pihole/gravity.db' \
+    --exclude='pihole/etc-pihole/gravity_backups' \
+    --exclude='pihole/etc-pihole/pihole-FTL.db*' \
+    --exclude='pihole/etc-pihole/macvendor.db' \
+    -czf "$ARCHIVE" "${existing[@]}"
+rc=$?
+if [[ $rc -le 1 ]] && tar -tzf "$ARCHIVE" >/dev/null 2>&1; then
     echo "  [OK] Backup creato ($(du -h "$ARCHIVE" | cut -f1))"
 else
     echo "  [FAIL] Backup fallito o archivio corrotto!"

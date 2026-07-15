@@ -35,7 +35,7 @@ export NEEDRESTART_MODE=a          # non chiedere quali servizi riavviare
 # ── 1. Sistema operativo + engine Docker ─────────────────────
 # Il repo apt di Docker è già configurato (install.sh), quindi full-upgrade
 # aggiorna sia i pacchetti del Pi OS sia docker-ce/containerd.
-echo "[1/4] Aggiornamento sistema operativo e Docker engine..."
+echo "[1/5] Aggiornamento sistema operativo e Docker engine..."
 apt-get update -qq
 apt-get -y \
     -o Dpkg::Options::="--force-confold" \
@@ -47,8 +47,11 @@ apt-get clean
 # ── 2. Container dello stack ─────────────────────────────────
 echo "[2/5] Aggiornamento container Docker..."
 cd "$REPO_DIR" || { echo "cartella repo non raggiungibile: $REPO_DIR"; exit 1; }
-docker compose pull
-docker compose up -d
+# Se Netdata è attivo va incluso il profilo monitoring, altrimenti il pull lo salta
+COMPOSE_ARGS=()
+docker ps --format '{{.Names}}' | grep -qx netdata && COMPOSE_ARGS=(--profile monitoring)
+docker compose "${COMPOSE_ARGS[@]}" pull
+docker compose "${COMPOSE_ARGS[@]}" up -d --remove-orphans
 
 # ── 3. Pulizia file obsoleti ─────────────────────────────────
 echo "[3/5] Pulizia file obsoleti..."
