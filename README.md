@@ -223,7 +223,7 @@ Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
 Prima di avviarlo serve una chiave dell'app nel `.env`:
 
 ```bash
-echo "SPEEDTEST_APP_KEY=base64:$(openssl rand -base64 32)" >> .env
+printf '\nSPEEDTEST_APP_KEY=base64:%s\n' "$(openssl rand -base64 32)" >> .env
 sudo docker compose up -d speedtest-tracker
 ```
 
