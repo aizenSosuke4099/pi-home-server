@@ -48,7 +48,7 @@ cd "$REPO_DIR" || { echo "  [FAIL] cartella repo non raggiungibile: $REPO_DIR"; 
 ITEMS=( .env
         pihole/etc-pihole pihole/dnsmasq pihole/custom-hosts.txt
         npm/data npm/letsencrypt
-        uptime-kuma/data
+        uptime-kuma/data speedtest-tracker/config
         wireguard/config
         homepage/config )
 

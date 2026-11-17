@@ -53,3 +53,22 @@
         widget:
           type: netdata
           url: http://netdata:19999
+
+    - Speedtest Tracker:
+        href: http://{{HOMEPAGE_VAR_PI_IP}}:8765
+        description: Velocità della linea nel tempo
+        icon: speedtest-tracker
+        server: my-docker
+        container: speedtest-tracker
+        widget:
+          type: speedtest
+          url: http://speedtest-tracker
+          version: 2
+          key: "{{HOMEPAGE_VAR_SPEEDTEST_KEY}}"
+
+    - Dozzle:
+        href: http://{{HOMEPAGE_VAR_PI_IP}}:8080
+        description: Log dei container
+        icon: dozzle
+        server: my-docker
+        container: dozzle

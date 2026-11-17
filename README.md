@@ -10,6 +10,8 @@ Homepage ─────→ dashboard unica con tutti i servizi
 Uptime Kuma ──→ monitora se i servizi sono online
 Auto-update ──→ aggiorna OS + Docker + container ogni domenica notte (systemd)
 Netdata ──────→ dashboard CPU/RAM/rete in tempo reale (opzionale)
+Dozzle ───────→ log di tutti i container dal browser
+Speedtest ────→ speed test automatici con storico (Speedtest Tracker)
 ```
 
 ---
@@ -116,6 +118,8 @@ sudo docker compose logs -f pihole
 | Pi-hole | `https://pihole.<subdomain>.duckdns.org` | Gestione blocco DNS |
 | Uptime Kuma | `https://kuma.<subdomain>.duckdns.org` | Monitoraggio uptime servizi |
 | Netdata | `https://netdata.<subdomain>.duckdns.org` | CPU, RAM, temperatura (se attivo) |
+| Dozzle | `http://<IP-del-pi>:8080` | Log dei container in tempo reale |
+| Speedtest Tracker | `http://<IP-del-pi>:8765` | Storico della velocità della linea |
 
 Sostituisci `<IP-del-pi>` con l'indirizzo locale del tuo Raspberry (es. `192.168.1.40`).
 
@@ -213,6 +217,21 @@ Aggiungi un reindirizzamento porte nel pannello del router per WireGuard:
 - Destinazione: IP del Pi
 
 > ⚠️ **Inoltra dall'esterno solo la `40959/UDP`** (e, solo se usi i certificati Let's Encrypt in HTTP-01, le `80`/`443/TCP`). **Non** esporre mai su Internet i pannelli admin: `81` (NPM), `3000` (Homepage), `3001` (Kuma), `19999` (Netdata). Restano raggiungibili dalla LAN o, da fuori, tramite la VPN WireGuard.
+
+### 7. Speedtest Tracker
+
+Prima di avviarlo serve una chiave dell'app nel `.env`:
+
+```bash
+echo "SPEEDTEST_APP_KEY=base64:$(openssl rand -base64 32)" >> .env
+sudo docker compose up -d speedtest-tracker
+```
+
+Apri `http://<IP-del-pi>:8765`, entra con `admin@example.com` / `password` e **cambia subito email e password**. Poi, dalle impostazioni:
+- **Notifiche** → aggiungi il tuo topic ntfy e una soglia (es. avviso se il download scende sotto i 500 Mbps).
+- **API tokens** → crea un token, mettilo nel `.env` come `SPEEDTEST_API_TOKEN=...` e lancia `sudo docker compose up -d homepage`: il widget in Homepage mostra l'ultimo risultato.
+
+Fa un test ogni 6 ore (~800 MB di traffico l'uno): per cambiare frequenza modifica `SPEEDTEST_SCHEDULE` nel compose.
 
 ---
 

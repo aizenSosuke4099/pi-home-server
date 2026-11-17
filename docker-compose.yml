@@ -126,6 +126,7 @@ services:
       HOMEPAGE_VAR_PIHOLE_KEY: "${PIHOLE_PASSWORD}"
       HOMEPAGE_VAR_PI_IP: "${PI_IP}"               # usato nei link di homepage (niente più sed)
       HOMEPAGE_VAR_DUCKDNS: "${DUCKDNS_SUBDOMAIN}"  # sottodominio per i link HTTPS via NPM
+      HOMEPAGE_VAR_SPEEDTEST_KEY: "${SPEEDTEST_API_TOKEN:-}"  # widget Speedtest Tracker
     volumes:
       - ./homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -148,6 +149,46 @@ services:
     networks:
       dns_net:
         ipv4_address: 172.20.0.11
+
+  # ─── Dozzle (log di tutti i container dal browser) ─────────────────────────
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      DOZZLE_NO_ANALYTICS: "true"
+      DOZZLE_HOSTNAME: "pi"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro   # sola lettura: vede i log, non tocca i container
+    mem_limit: 128m
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.12
+
+  # ─── Speedtest Tracker (speed test automatici con storico) ────────────────
+  speedtest-tracker:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    container_name: speedtest-tracker
+    restart: unless-stopped
+    ports:
+      - "8765:80"
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Europe/Rome"
+      DISPLAY_TIMEZONE: "Europe/Rome"
+      APP_KEY: "${SPEEDTEST_APP_KEY}"
+      DB_CONNECTION: "sqlite"
+      SPEEDTEST_SCHEDULE: "0 */6 * * *"    # ogni 6 ore (~800 MB di traffico a test)
+      PRUNE_RESULTS_OLDER_THAN: "180"       # giorni di storico da tenere
+    volumes:
+      - ./speedtest-tracker/config:/config
+    mem_limit: 384m
+    networks:
+      dns_net:
+        ipv4_address: 172.20.0.13
 
   # ─── Netdata (opzionale) ───────────────────────────────────────────────────
   netdata:
