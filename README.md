@@ -252,7 +252,7 @@ Le regex di telemetria che le liste non coprono sono in `pihole/regex-blocklist.
 
 ## Aggiornamento
 
-Lo script `scripts/update.sh` aggiorna **tutto** in un colpo: pacchetti del sistema operativo, engine Docker (`docker-ce`) e immagini dei container. Fa anche un health-check finale e scrive il log in `/var/log/pi-home-update.log`.
+Lo script `scripts/update.sh` aggiorna **tutto** in un colpo: pacchetti del sistema operativo, engine Docker (`docker-ce`) e immagini dei container. Fa anche un health-check finale e scrive il log in `/var/log/pi-home-update.log`. Se nella cartella accanto c'è il progetto `promemoria-turni`, aggiorna anche quello (rebuild con Python aggiornato + Samba).
 
 ### Aggiornamento manuale
 

@@ -45,6 +45,7 @@ apt-get -y autoremove --purge
 apt-get clean
 
 # ── 2. Container dello stack ─────────────────────────────────
+fail=0
 echo "[2/5] Aggiornamento container Docker..."
 cd "$REPO_DIR" || { echo "cartella repo non raggiungibile: $REPO_DIR"; exit 1; }
 # Se Netdata è attivo va incluso il profilo monitoring, altrimenti il pull lo salta
@@ -52,6 +53,16 @@ COMPOSE_ARGS=()
 docker ps --format '{{.Names}}' | grep -qx netdata && COMPOSE_ARGS=(--profile monitoring)
 docker compose "${COMPOSE_ARGS[@]}" pull
 docker compose "${COMPOSE_ARGS[@]}" up -d --remove-orphans
+
+# Promemoria turni (progetto separato nella cartella accanto): se presente,
+# ricostruisce l'immagine con Python aggiornato e aggiorna Samba
+TURNI_DIR="$(dirname "$REPO_DIR")/promemoria-turni"
+if [[ -f "$TURNI_DIR/docker-compose.yml" ]]; then
+    echo "  Aggiorno anche promemoria-turni..."
+    (cd "$TURNI_DIR" && docker compose build --pull --quiet \
+        && docker compose pull --quiet samba && docker compose up -d) \
+        || { echo "  [FAIL] aggiornamento promemoria-turni"; fail=1; }
+fi
 
 # ── 3. Pulizia file obsoleti ─────────────────────────────────
 echo "[3/5] Pulizia file obsoleti..."
@@ -64,7 +75,6 @@ journalctl --vacuum-time=30d 2>/dev/null || true
 # ── 4. Health-check ──────────────────────────────────────────
 echo "[4/5] Verifica servizi..."
 sleep 10
-fail=0
 for c in pihole unbound npm; do
     state="$(docker inspect -f '{{.State.Running}}' "$c" 2>/dev/null || echo missing)"
     if [[ "$state" == "true" ]]; then
