@@ -233,6 +233,17 @@ Apri `http://<IP-del-pi>:8765`, entra con `admin@example.com` / `password` e **c
 
 Fa un test ogni 6 ore (~800 MB di traffico l'uno): per cambiare frequenza modifica `SPEEDTEST_SCHEDULE` nel compose.
 
+### 8. Dozzle
+
+I log possono contenere dati sensibili, quindi Dozzle chiede un login. Crea l'utente una volta (la password non finisce nella cronologia):
+
+```bash
+mkdir -p dozzle
+read -rsp "Password per Dozzle: " PW; echo
+sudo docker run --rm amir20/dozzle generate --name Lorenzo --email admin@localhost --password "$PW" lorenzo | sudo tee dozzle/users.yml >/dev/null; unset PW
+sudo docker compose up -d dozzle
+```
+
 ---
 
 ## Liste di blocco

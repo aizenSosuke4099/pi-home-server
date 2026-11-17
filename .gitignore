@@ -11,6 +11,7 @@ pihole/dnsmasq/*.conf
 # Dati runtime servizi
 uptime-kuma/data/
 speedtest-tracker/config/
+dozzle/
 
 # Config WireGuard (contiene chiavi private!)
 wireguard/config/

@@ -69,6 +69,7 @@ services:
       PEERDNS: "172.20.0.2"              # usa Pi-hole
       INTERNAL_SUBNET: "10.13.13.0"
       ALLOWEDIPS: "0.0.0.0/0"
+      LOG_CONFS: "false"                 # non scrivere i peer (chiavi private) nei log
     volumes:
       - ./wireguard/config:/config
       - /lib/modules:/lib/modules:ro
@@ -160,8 +161,10 @@ services:
     environment:
       DOZZLE_NO_ANALYTICS: "true"
       DOZZLE_HOSTNAME: "pi"
+      DOZZLE_AUTH_PROVIDER: "simple"        # login obbligatorio: utenti in dozzle/users.yml
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro   # sola lettura: vede i log, non tocca i container
+      - /var/run/docker.sock:/var/run/docker.sock:ro   # Dozzle non abilita azioni sui container (default)
+      - ./dozzle:/data
     mem_limit: 128m
     networks:
       dns_net:
